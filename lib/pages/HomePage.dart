@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    Text("Beverage", style: TextStyle(color: Colors.white)),
+                    Text("Fruits", style: TextStyle(color: Colors.white)),
                     CustomProgressBar(
                       progress: 0.15,
                       color: Colors.blue,
@@ -198,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    Text("Beverage", style: TextStyle(color: Colors.white)),
+                    Text("Breads", style: TextStyle(color: Colors.white)),
                     CustomProgressBar(
                       progress: 0.1,
                       color: Colors.blue,

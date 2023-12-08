@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sugarscanning/pages/HomePage.dart';
 
 import '../components/Button.dart';
+import '../components/Router.dart';
+import 'ScanPage.dart';
 
 class NavigatePage extends StatefulWidget {
   const NavigatePage({Key? key}) : super(key: key);
@@ -33,7 +35,10 @@ class _NavigatePageState extends State<NavigatePage> {
         shape: CircleBorder(side: BorderSide(color: Colors.black)),
         elevation: 0,
         child: Icon(Icons.document_scanner, color: Colors.white),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context)
+              .push<void>(MyRouter.createRoute(ScanPage(), "bottom"));
+        },
       ),
       floatingActionButtonAnimator: scalingAnimation(),
       floatingActionButtonLocation: CustomFloatingActionButtonLocation(
@@ -44,22 +49,6 @@ class _NavigatePageState extends State<NavigatePage> {
             index: _currentIndex,
             children: _pageList,
           ),
-          Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 0,
-              child: LinearProgressIndicator()),
-          Positioned(
-              bottom: 7,
-              left: 0,
-              right: 0,
-              height: 0,
-              child: Text(
-                "logMsg",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10, color: Colors.grey),
-              )),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -73,11 +62,12 @@ class _NavigatePageState extends State<NavigatePage> {
         },
         //iconSize: 18.0,
         fixedColor: Colors.blue,
+        unselectedItemColor: Colors.blue,
         type: BottomNavigationBarType.fixed,
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: (" ")),
           BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: (" ")),
-          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: (" ")),
-          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: (" ")),
+          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: (" ")),
         ],
       ),
     );
