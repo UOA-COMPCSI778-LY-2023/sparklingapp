@@ -19,7 +19,7 @@ flutter create .
 ## Configure APP Permissions:
 
 ### iOS:
-In the path ./sparklingapp/ios/Runner, add the following value to the "<dict>" key in the Info.plist file:
+In the path ./sparklingapp/ios/Runner, add the following value to the "dict" key in the Info.plist file:
 ```
 <key>NSCameraUsageDescription</key>
 <string>Use camera to scanning Barcode</string>
@@ -27,7 +27,7 @@ In the path ./sparklingapp/ios/Runner, add the following value to the "<dict>" k
 ![IOS camera permission ](./files/ios_camera_permission.png)
 
 ### Android:
-In the path ./sparklingapp/android/app/src/main, add the following value to the "<manifest>" key in the AndroidManifest.xml file:
+In the path ./sparklingapp/android/app/src/main, add the following value to the "manifest" key in the AndroidManifest.xml file:
 ```
 <uses-permission android:name="android.permission.CAMERA" />
 ```
