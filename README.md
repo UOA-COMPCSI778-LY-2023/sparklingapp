@@ -1,16 +1,41 @@
-# sugarscanning
+# sparklingapp
 
-A new Flutter project.
+SParklingAPP is an internship program at UoA. It is an app that helps users control their sugar intake.
 
-## Getting Started
+## Environment Setup:
 
-This project is a starting point for a Flutter application.
+Refer to the official configuration to install the Flutter environment: Flutter Installation Guide
+Project Initialization:
 
-A few resources to get you started if this is your first Flutter project:
+## Clone the project to your local machine:
+(```)
+git clone git@github.com:UOA-COMPCSI778-LY-2023/sparkling-app.git
+(```)
+## Initialize the project:
+(```)
+cd sparklingapp
+flutter create .
+(```)
+## Configure APP Permissions:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### iOS:
+In the path ./sparklingapp/ios/Runner, add the following value to the <dict> key in the Info.plist file:
+(```)
+<key>NSCameraUsageDescription</key>
+<string>Use camera to scanning Barcode</string>
+(```)
+### Android:
+In the path ./sparklingapp/android/app/src/main, add the following value to the <manifest> key in the AndroidManifest.xml file:
+(```)
+<uses-permission android:name="android.permission.CAMERA" />
+(```)
+In the path ./sparklingapp/android, modify the minSdkVersion value in build.gradle file under defaultConfig to 21
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Start the Emulator:
+
+![VS Code select ](./files/vscode_choose_platform.png)
+
+## Project Launch:
+(```)
+flutter run
+(```)

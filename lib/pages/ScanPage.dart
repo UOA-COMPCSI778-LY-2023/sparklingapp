@@ -1,57 +1,38 @@
-import 'dart:async';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 
-import '../components/Toast.dart';
+import '../components/barcode/detector_view.dart';
+import '../components/barcode/barcode_detector_painter.dart';
 
 class ScanPage extends StatefulWidget {
-  ScanPage({Key? key}) : super(key: key);
-  _ScanPageState createState() => _ScanPageState();
+  @override
+  State<ScanPage> createState() => _ScanPageState();
 }
 
 class _ScanPageState extends State<ScanPage> {
-  CameraController? _controller;
-  Future<void>? _initializeControllerFuture;
-
-  @override
-  void initState() {
-    _initCamera();
-    super.initState();
-  }
+  final BarcodeScanner _barcodeScanner = BarcodeScanner();
+  bool _canProcess = true;
+  bool _isBusy = false;
+  CustomPaint? _customPaint;
+  String? _text;
+  var _cameraLensDirection = CameraLensDirection.back;
 
   @override
   void dispose() {
-    // 释放摄像头控制器资源
-    _controller?.dispose();
+    _canProcess = false;
+    _barcodeScanner.close();
     super.dispose();
-  }
-
-  Future<void> _initCamera() async {
-    final cameras = await availableCameras();
-    if (cameras.length > 0) {
-      final firstCamera = cameras.first;
-
-      _controller = CameraController(
-        firstCamera,
-        ResolutionPreset.medium,
-      );
-
-      _initializeControllerFuture = _controller!.initialize();
-      print("Finish camera initialization");
-
-      //await _controller!.initialize();
-      setState(() {});
-    } else {
-      Toast.toast(context,
-          msg: "No available camera", position: ToastPostion.bottom);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     double contentHeight = MediaQuery.of(context).size.height - 220 - 200;
     if (contentHeight < 60) contentHeight = 60;
+
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -65,30 +46,24 @@ class _ScanPageState extends State<ScanPage> {
               children: [
                 Container(
                   height: 200,
+                  width: size.width - 20,
                   margin: const EdgeInsets.fromLTRB(10, 5, 10, 20),
-                  width: double.infinity,
+                  // width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(3),
                   ),
-                  child: FutureBuilder<void>(
-                    future: _initializeControllerFuture,
-                    builder: (context, snapshot) {
-                      print(snapshot.toString());
-                      print("Check connection status");
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.hasError) {
-                          return Text('Camera error: ${snapshot.error}');
-                        }
-                        // 如果摄像头初始化完成，则显示摄像头预览
-                        return CameraPreview(_controller!);
-                      } else {
-                        // 否则显示一个加载指示器
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    },
+                  child: DetectorView(
+                    title: 'Barcode Scanner',
+                    customPaint: _customPaint,
+                    text: _text,
+                    onImage: _processImage,
+                    initialCameraLensDirection: _cameraLensDirection,
+                    onCameraLensDirectionChanged: (value) =>
+                        _cameraLensDirection = value,
                   ),
-                )
+                ),
+                // Text(barcode),
               ],
             ),
             Row(
@@ -139,5 +114,46 @@ class _ScanPageState extends State<ScanPage> {
             ),
           ],
         ));
+    // return DetectorView(
+    //   title: 'Barcode Scanner',
+    //   customPaint: _customPaint,
+    //   text: _text,
+    //   onImage: _processImage,
+    //   initialCameraLensDirection: _cameraLensDirection,
+    //   onCameraLensDirectionChanged: (value) => _cameraLensDirection = value,
+    // );
+  }
+
+  Future<void> _processImage(InputImage inputImage) async {
+    if (!_canProcess) return;
+    if (_isBusy) return;
+    _isBusy = true;
+    setState(() {
+      _text = '';
+    });
+
+    final barcodes = await _barcodeScanner.processImage(inputImage);
+    if (inputImage.metadata?.size != null &&
+        inputImage.metadata?.rotation != null) {
+      final painter = BarcodeDetectorPainter(
+        barcodes,
+        inputImage.metadata!.size,
+        inputImage.metadata!.rotation,
+        _cameraLensDirection,
+      );
+      _customPaint = CustomPaint(painter: painter);
+    } else {
+      String text = 'Barcodes found: ${barcodes.length}\n\n';
+      for (final barcode in barcodes) {
+        text += 'Barcode: ${barcode.rawValue}\n\n';
+      }
+      _text = text;
+      // TODO: set _customPaint to draw boundingRect on top of image
+      _customPaint = null;
+    }
+    _isBusy = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
