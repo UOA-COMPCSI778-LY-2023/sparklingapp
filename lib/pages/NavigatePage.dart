@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sugarscanning/pages/HomePage.dart';
-
 import '../components/Button.dart';
 import '../components/Router.dart';
+import 'HomePage.dart';
 import 'ScanPage.dart';
 
 class NavigatePage extends StatefulWidget {

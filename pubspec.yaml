@@ -1,4 +1,4 @@
-name: sugarscanning
+name: sugatiol
 description: A sugar scanning APP.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -36,9 +36,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   camera: ^0.10.5+6
-  google_ml_kit: ^0.16.3
+  # google_ml_kit: ^0.16.3
   path_provider: ^2.1.1
   image_picker: ^1.0.4
+  dio: ^5.4.0
+  logger: ^2.0.2+1
+  intl: ^0.19.0
+  google_mlkit_barcode_scanning: ^0.10.0
 
 dev_dependencies:
   flutter_test:

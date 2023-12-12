@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sugarscanning/pages/NavigatePage.dart';
+import '../pages/NavigatePage.dart';
 
 final routes = {
   '/': (context) => NavigatePage(),

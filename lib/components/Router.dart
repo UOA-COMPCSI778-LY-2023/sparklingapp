@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 class MyRouter {
-  /**
-   * 创建一个新页面进入效果
-   */
   static Route createRoute(page, String whereIn) {
     return PageRouteBuilder<SlideTransition>(
       barrierColor: Colors.white.withOpacity(0.5),
@@ -38,9 +35,7 @@ class MyRouter {
               y = 0;
             }
         }
-        var tween = Tween<Offset>(
-            begin: Offset(x, y),
-            end: Offset.zero); //0，1 为从下往上进入，1，0为从右往左进入，0，-1为从上往下
+        var tween = Tween<Offset>(begin: Offset(x, y), end: Offset.zero);
         var curveTween = CurveTween(curve: curv); //fastLinearToSlowEaseIn
 
         return SlideTransition(
