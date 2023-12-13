@@ -43,6 +43,7 @@ class _GalleryViewState extends State<GalleryView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
+          automaticallyImplyLeading: false, //hide back button
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 20.0),
@@ -60,21 +61,21 @@ class _GalleryViewState extends State<GalleryView> {
 
   Widget _galleryBody() {
     return ListView(shrinkWrap: true, children: [
-      _image != null
-          ? SizedBox(
-              height: 400,
-              width: 400,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Image.file(_image!),
-                ],
-              ),
-            )
-          : Icon(
-              Icons.image,
-              size: 200,
-            ),
+      // _image != null
+      //     ? SizedBox(
+      //         height: 400,
+      //         width: 400,
+      //         child: Stack(
+      //           fit: StackFit.expand,
+      //           children: <Widget>[
+      //             Image.file(_image!),
+      //           ],
+      //         ),
+      //       )
+      //     : Icon(
+      //         Icons.image,
+      //         size: 200,
+      //       ),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: ElevatedButton(

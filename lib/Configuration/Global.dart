@@ -5,3 +5,7 @@ class NetworkCfg {
   static const int maxNetConnectRetryCount = 3;
   static const int maxNetMutialRetryCount = 3;
 }
+
+class DebugCfg {
+  static const bool isDebug = true;
+}

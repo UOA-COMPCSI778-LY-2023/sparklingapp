@@ -1,12 +1,15 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
+import 'package:sugatiol/Configuration/Global.dart';
 
 import '../Configuration/APIList.dart';
 import '../components/MyHttpRequest.dart';
+import '../components/Router.dart';
 import '../components/Toast.dart';
 import '../components/barcode/detector_view.dart';
 import '../components/barcode/barcode_detector_painter.dart';
+import 'ProductDetailPage.dart';
 
 class ScanPage extends StatefulWidget {
   @override
@@ -60,6 +63,7 @@ class _ScanPageState extends State<ScanPage> {
       return Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.white),
             backgroundColor: Colors.black,
             centerTitle: false,
             elevation: 0,
@@ -78,10 +82,13 @@ class _ScanPageState extends State<ScanPage> {
                       borderRadius: BorderRadius.circular(3),
                     ),
                     child: DetectorView(
-                      title: 'Barcode Scanner',
+                      title: 'Pick up a picture',
                       customPaint: _customPaint,
                       text: _text,
                       onImage: _processImage,
+                      initialDetectionMode: DebugCfg.isDebug
+                          ? DetectorViewMode.gallery
+                          : DetectorViewMode.liveFeed,
                       initialCameraLensDirection: _cameraLensDirection,
                       onCameraLensDirectionChanged: (value) =>
                           _cameraLensDirection = value,
@@ -129,11 +136,9 @@ class _ScanPageState extends State<ScanPage> {
                             size: 12,
                           ),
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => ScanPage()), //
-                            // );
+                            Navigator.of(context).push<void>(
+                                MyRouter.createRoute(
+                                    ProductDetailPage(), "right"));
                           },
                         ));
                   },
