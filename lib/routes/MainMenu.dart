@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sugatiol/pages/StartPage.dart';
 import '../pages/NavigatePage.dart';
 
 final routes = {
   '/': (context) => NavigatePage(),
   '/form': (context) => NavigatePage(),
+  '/start': (context) => StartPage()
 };
 
 var onGenerateRoute = (RouteSettings settings) {

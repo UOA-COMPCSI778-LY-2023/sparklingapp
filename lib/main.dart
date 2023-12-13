@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         // home:Tabs(),
-        initialRoute: '/', //初始化的时候加载的路由
+        initialRoute: '/start', //初始化的时候加载的路由
         onGenerateRoute: onGenerateRoute);
   }
 }
