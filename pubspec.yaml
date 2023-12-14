@@ -73,6 +73,8 @@ flutter:
     - assets/cococola.png
     - assets/homepage.jpeg
     - assets/background.jpg
+    - assets/product_no_found.png
+    - assets/deployed_code.png
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

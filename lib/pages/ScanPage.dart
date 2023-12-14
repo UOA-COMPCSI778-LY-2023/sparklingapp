@@ -138,7 +138,9 @@ class _ScanPageState extends State<ScanPage> {
                           onTap: () {
                             Navigator.of(context).push<void>(
                                 MyRouter.createRoute(
-                                    ProductDetailPage(), "right"));
+                                    ProductDetailPage(
+                                        productDetailData: productData),
+                                    "right"));
                           },
                         ));
                   },

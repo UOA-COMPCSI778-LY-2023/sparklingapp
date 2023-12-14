@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
 class ProductDetailPage extends StatefulWidget {
+  final Map productDetailData;
+  ProductDetailPage({Key? key, required this.productDetailData})
+      : super(key: key);
+
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState();
+  State<ProductDetailPage> createState() =>
+      _ProductDetailPageState(productDetailData: this.productDetailData);
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
+  final Map productDetailData;
+  _ProductDetailPageState({required this.productDetailData});
   @override
   void dispose() {
     super.dispose();
@@ -18,6 +25,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       if (contentHeight < 60) contentHeight = 60;
 
       final size = MediaQuery.of(context).size;
+
+      String imgUrl = "";
+      if (productDetailData["image_front_url"] != null) {
+        imgUrl = productDetailData["image_front_url"];
+      }
+      List ingridientsList = [];
+      if (productDetailData["ingredients"] != null) {
+        ingridientsList = productDetailData["ingredients"];
+      }
+      Map nutriments = {};
+      if (productDetailData["nutriments"] != null) {
+        nutriments = productDetailData["nutriments"];
+      }
+      double sugarNum = 0;
+      if (nutriments["sugars"] != null) {
+        sugarNum = nutriments["sugars"];
+      }
 
       return Scaffold(
         backgroundColor: Colors.black,
@@ -34,21 +58,35 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         body: Stack(
           children: [
             Positioned(
-              child: Expanded(
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
                     Container(
-                        height: 200,
-                        width: size.width - 20,
-                        padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        // width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.pink,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(20),
+                      alignment: Alignment.topLeft,
+                      height: 200,
+                      width: size.width - 20,
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      // width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 246, 81, 136),
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 10, // 每行一个图片
+                          childAspectRatio: 1, // 调整这个值以改变图片的宽高比
                         ),
-                        child: Icon(Icons.ac_unit)),
+                        itemCount: sugarNum.ceil(), // 总共 23 个图片
+                        itemBuilder: (context, index) {
+                          return Image(
+                            image: AssetImage("assets/deployed_code.png"),
+                            color: Colors.white,
+                          );
+                        },
+                      ),
+                    ),
                     Container(
                       padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
                       margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
@@ -65,9 +103,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           SizedBox(
                             width: 20,
                           ),
-                          Text(
-                            "Coca Cola equals to 32 sugar cubes",
-                            style: TextStyle(color: Colors.white),
+                          Expanded(
+                            child: Text(
+                              "${productDetailData["product_name"]} contains ${sugarNum.toStringAsFixed(2)}g sugar, equals to ${(sugarNum / 4.5).toStringAsFixed(2)} sugar cubes",
+                              style: TextStyle(color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
                           )
                         ],
                       ),
@@ -101,9 +143,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               // color: Colors.red,
                               // height: 100,
                               child: Center(
-                                  child: Image(
-                                image: AssetImage('assets/cococola.png'),
-                              )),
+                                child: (imgUrl == "")
+                                    ? Image(
+                                        image: AssetImage(
+                                            "assets/product_no_found.png"))
+                                    : Image.network(imgUrl),
+                              ),
                             ),
                           ),
                           Expanded(
@@ -112,7 +157,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                               alignment: Alignment.topCenter,
                               child: Text(
-                                'Coca Cola',
+                                productDetailData["product_name"],
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 24),
                               ),
@@ -140,41 +185,91 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ),
                     ),
                     Container(
-                      height: 6 * 30,
+                      height: ingridientsList.length * 30 + 5,
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 74, 73, 73),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Expanded(
-                        flex: 1,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                          itemCount: 6,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                              height: 25,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Calories",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Text(
-                                    "0 g",
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                      child: ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        itemCount: ingridientsList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            height: 25,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  ingridientsList[index]["text"],
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  ingridientsList[index]["percent_estimate"]
+                                          .toString() +
+                                      " g",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
+                    // Container(
+                    //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    //   margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    //   alignment: Alignment.bottomLeft,
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         "Nutriments Table",
+                    //         style: TextStyle(color: Colors.white),
+                    //       ),
+                    //       Text(
+                    //         "Per Serving",
+                    //         style: TextStyle(color: Colors.white),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Container(
+                    //   height: nutriments.keys.toList().length * 30 + 5,
+                    //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    //   margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    //   decoration: BoxDecoration(
+                    //     color: Color.fromARGB(255, 74, 73, 73),
+                    //     borderRadius: BorderRadius.circular(20),
+                    //   ),
+                    //   child: ListView.builder(
+                    //     padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    //     itemCount: nutriments.keys.toList().length,
+                    //     itemBuilder: (BuildContext context, int index) {
+                    //       return Container(
+                    //         margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    //         height: 25,
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text(
+                    //               nutriments.keys.toList()[index],
+                    //               style: TextStyle(color: Colors.white),
+                    //             ),
+                    //             Text(
+                    //               nutriments[nutriments.keys.toList()[index]]
+                    //                       .toString() +
+                    //                   " g",
+                    //               style: TextStyle(color: Colors.white),
+                    //             )
+                    //           ],
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -188,26 +283,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle add action
-                      },
-                      child: Text('Add', style: TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
+                    SizedBox(
+                      width: 100,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle add action
+                        },
+                        child:
+                            Text('Add', style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue,
+                        ),
                       ),
                     ),
                     SizedBox(
-                      width: 150,
+                      width: 100,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle cancel action
-                      },
-                      child:
-                          Text('Cancel', style: TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
+                    SizedBox(
+                      width: 100,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle cancel action
+                        },
+                        child: Text('Cancel',
+                            style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue,
+                        ),
                       ),
                     ),
                   ],
