@@ -25,6 +25,10 @@ In the path ./sparklingapp/ios/Runner, add the following value to the "dict" key
 <string>Use camera to scanning Barcode</string>
 ```
 ![IOS camera permission ](./files/ios_camera_permission.png)
+Use xcode to open the file Runner.xcworkspace under the path . /sparklingapp/ios under the file Runner.xcworkspace. In the xcode project manager, set the minimum system version to 14.
+![IOS mini os version ](./files/ios_select_miniosversion.png)
+Then in xcode, set the developer account to the Apple account you are currently logged into in macOS.
+![IOS developer ](./files/ios_select_developer_account.png)
 
 ### Android:
 In the path ./sparklingapp/android/app/src/main, add the following value to the "manifest" key in the AndroidManifest.xml file:
@@ -34,6 +38,11 @@ In the path ./sparklingapp/android/app/src/main, add the following value to the 
 ![Android camera permission ](./files/android_camera_permission.png)
 In the path ./sparklingapp/android/app, modify the "flutter.minSdkVersion" in "build.gradle" file under defaultConfig to 21
 ![Android minisdkversion ](./files/android_minisdkversion.png)
+
+## Configure the debug mode:
+	The DebugCfg class in the path lib/Configuration/Global.dart file is used to configure debugging-related configuration. If isDebug is true, it means the camera is currently in debug mode; false is not debug mode. In debug mode, the camera will automatically switch to support reading photos from albums.
+	When running on a cell phone, it is recommended to set idDebug to false.
+![Debug configuration ](./files/debug_configuration.png)
 
 ## Start the Emulator:
 

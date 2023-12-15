@@ -116,31 +116,62 @@ class _ScanPageState extends State<ScanPage> {
                   itemBuilder: (BuildContext context, int index) {
                     Map productData =
                         products[products.keys.toList()[index]]["product"];
+                    String productName = "";
+                    String productBrand = "";
+                    String productImageUrl = "";
+                    if (productData["product_name"] != null) {
+                      productName = productData["product_name"];
+                    }
+                    if (productData["brands"] != null) {
+                      productBrand = productData["brands"];
+                    }
+                    if (productData["image_front_url"] != null) {
+                      productImageUrl = productData["image_front_url"];
+                    }
                     return Container(
                         margin: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green),
+                          border: Border.all(
+                              color: (productName != "")
+                                  ? Colors.green
+                                  : Colors.grey),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ListTile(
-                          leading: Icon(
-                            Icons.breakfast_dining,
-                            color: Colors.white,
-                          ),
+                          leading:
+                              ((productName != "") && (productImageUrl != ""))
+                                  ? Image.network(productImageUrl)
+                                  : Icon(
+                                      Icons.breakfast_dining,
+                                      color: (productName != "")
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
                           title: Text(
-                              '${productData["brands"] != null ? productData["brands"] + " - " : ""} - ${productData["product_name"]}',
-                              style: TextStyle(color: Colors.white)),
+                            '${(productBrand != "") ? productBrand + " - " : ""} ${(productName != "") ? productName : "Unknown product"}',
+                            style: TextStyle(
+                                color: (productName != "")
+                                    ? Colors.white
+                                    : Colors.grey),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
                           trailing: Icon(
                             Icons.arrow_forward_ios,
                             color: Colors.grey,
                             size: 12,
                           ),
                           onTap: () {
-                            Navigator.of(context).push<void>(
-                                MyRouter.createRoute(
-                                    ProductDetailPage(
-                                        productDetailData: productData),
-                                    "right"));
+                            (productName != "")
+                                ? Navigator.of(context).push<void>(
+                                    MyRouter.createRoute(
+                                        ProductDetailPage(
+                                            productDetailData: productData),
+                                        "right"))
+                                : Toast.toast(context,
+                                    msg: "This product detail is not available",
+                                    position: ToastPostion.bottom);
+                            ;
                           },
                         ));
                   },

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Configuration/Global.dart';
+import '../components/DateUtils.dart';
+import '../components/LogUtils.dart';
+import '../components/Toast.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -6,15 +12,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  void loadTodaySugar() {
+    try {
+      String today = MyDateUtils.formatToyyyMMdd(DateTime.now());
+      SharedPreferences.getInstance().then((prefs) {
+        String alreadyTodaySugarIntake = "0";
+        if (prefs.getString(PreferencesCfg.todaySugarIntake + today) != null) {
+          alreadyTodaySugarIntake = prefs
+              .getString(PreferencesCfg.todaySugarIntake + today)
+              .toString();
+        }
+        TempData.todaySugarIntakeTotal.value =
+            double.parse(alreadyTodaySugarIntake);
+      });
+    } catch (e) {
+      Log.e(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    loadTodaySugar();
   }
 
   @override
   Widget build(BuildContext context) {
     double contentHeight = MediaQuery.of(context).size.height - 220 - 200;
     if (contentHeight < 60) contentHeight = 60;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -36,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Column(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -51,49 +77,77 @@ class _HomePageState extends State<HomePage> {
           ),
           Column(
             children: [
-              Column(
-                children: [Text("Your", style: TextStyle(color: Colors.white))],
+              Row(
+                children: [
+                  SizedBox(
+                    width: 40,
+                  ),
+                  Text("Today",
+                      style: TextStyle(color: Colors.white, fontSize: 24))
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
-                margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 74, 73, 73),
-                  borderRadius: BorderRadius.circular(20), // 设置圆角的大小
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text("Current Daily Surgar Intake is",
-                            style: TextStyle(color: Colors.white)),
-                        CircleWidget(),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text("60%", style: TextStyle(color: Colors.white))
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            CustomProgressBar(
-                              progress: 0.6,
-                              color: Colors.orange,
-                              height: 20,
-                              width: 300,
-                            ),
-                            Text("10 g", style: TextStyle(color: Colors.green))
-                          ],
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              )
+              ValueListenableBuilder<double>(
+                  valueListenable: TempData.todaySugarIntakeTotal,
+                  builder: (c, ac, _) {
+                    double targetSugarNum = 100;
+                    double currentSugarRate = 0;
+                    if (targetSugarNum > 0) {
+                      currentSugarRate = (TempData.todaySugarIntakeTotal.value /
+                              targetSugarNum) *
+                          100;
+                    }
+                    if (currentSugarRate > 100) {
+                      currentSugarRate = 100;
+                    }
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                      margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 74, 73, 73),
+                        borderRadius: BorderRadius.circular(20), // 设置圆角的大小
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Current Daily Surgar Intake is",
+                                  style: TextStyle(color: Colors.white)),
+                              CircleWidget(),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text("${currentSugarRate}%",
+                                      style: TextStyle(color: Colors.white))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomProgressBar(
+                                    progress: currentSugarRate / 100,
+                                    color: currentSugarRate > 80
+                                        ? Colors.red
+                                        : currentSugarRate > 50
+                                            ? Colors.orange
+                                            : Colors.green,
+                                    height: 20,
+                                    width: 250,
+                                  ),
+                                  Text("${targetSugarNum} g",
+                                      style: TextStyle(color: Colors.green))
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  })
             ],
           ),
           Column(
@@ -233,23 +287,33 @@ class _HomePageState extends State<HomePage> {
 class CircleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 40.0,
-      height: 40.0,
-      decoration: BoxDecoration(
-        color: Colors.green,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          '6 g',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
+    return ValueListenableBuilder<double>(
+        valueListenable: TempData.todaySugarIntakeTotal,
+        builder: (c, ac, _) {
+          String showNum = "0";
+          if (ac > 999) {
+            showNum = "999+";
+          } else {
+            showNum = ac.round().toString();
+          }
+          return Container(
+            width: 60.0,
+            height: 60.0,
+            decoration: BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                '${showNum} g',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
 

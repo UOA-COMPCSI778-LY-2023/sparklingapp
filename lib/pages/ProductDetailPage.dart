@@ -1,4 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Configuration/Global.dart';
+import '../components/DateUtils.dart';
+import '../components/LogUtils.dart';
+import '../components/Toast.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Map productDetailData;
@@ -40,8 +48,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       }
       double sugarNum = 0;
       if (nutriments["sugars"] != null) {
-        sugarNum = nutriments["sugars"];
+        sugarNum = double.parse(nutriments["sugars"].toString());
       }
+      int sugarCubs = (sugarNum / 4.5).ceil();
 
       return Scaffold(
         backgroundColor: Colors.black,
@@ -75,10 +84,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ),
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 10, // 每行一个图片
-                          childAspectRatio: 1, // 调整这个值以改变图片的宽高比
+                          crossAxisCount: 10,
+                          childAspectRatio: 1,
                         ),
-                        itemCount: sugarNum.ceil(), // 总共 23 个图片
+                        itemCount: sugarCubs,
                         itemBuilder: (context, index) {
                           return Image(
                             image: AssetImage("assets/deployed_code.png"),
@@ -166,58 +175,69 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         ],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      alignment: Alignment.bottomLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Nutrition Table",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Text(
-                            "Per Serving",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: ingridientsList.length * 30 + 5,
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 74, 73, 73),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ListView.builder(
+                    if (ingridientsList.length > 0)
+                      Container(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        itemCount: ingridientsList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            height: 25,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  ingridientsList[index]["text"],
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  ingridientsList[index]["percent_estimate"]
-                                          .toString() +
-                                      " g",
-                                  style: TextStyle(color: Colors.white),
-                                )
-                              ],
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        alignment: Alignment.bottomLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Nutrition Table",
+                              style: TextStyle(color: Colors.white),
                             ),
-                          );
-                        },
+                            Text(
+                              "Per Serving",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    if (ingridientsList.length > 0)
+                      Container(
+                        height: ingridientsList.length * 30 + 5,
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 74, 73, 73),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          itemCount: ingridientsList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                              height: 25,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      ingridientsList[index]["text"],
+                                      style: TextStyle(color: Colors.white),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      ingridientsList[index]["percent_estimate"]
+                                              .toString() +
+                                          " g",
+                                      style: TextStyle(color: Colors.white),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     // Container(
                     //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                     //   margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -287,7 +307,36 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       width: 100,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Handle add action
+                          try {
+                            String today =
+                                MyDateUtils.formatToyyyMMdd(DateTime.now());
+                            SharedPreferences.getInstance().then((prefs) {
+                              String alreadyTodaySugarIntake = "0";
+                              if (prefs.getString(
+                                      PreferencesCfg.todaySugarIntake +
+                                          today) !=
+                                  null) {
+                                alreadyTodaySugarIntake = prefs
+                                    .getString(
+                                        PreferencesCfg.todaySugarIntake + today)
+                                    .toString();
+                              }
+                              double todaySugarIntakeTotal =
+                                  double.parse(alreadyTodaySugarIntake) +
+                                      sugarNum;
+                              prefs.setString(
+                                  PreferencesCfg.todaySugarIntake + today,
+                                  todaySugarIntakeTotal.toString());
+                              TempData.todaySugarIntakeTotal.value =
+                                  todaySugarIntakeTotal;
+                            });
+                            Navigator.pop(context);
+                          } catch (e) {
+                            Log.e(e);
+                            Toast.toast(context,
+                                msg: "${e.toString()}",
+                                position: ToastPostion.bottom);
+                          }
                         },
                         child:
                             Text('Add', style: TextStyle(color: Colors.white)),
@@ -303,7 +352,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       width: 100,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Handle cancel action
+                          Navigator.pop(context);
                         },
                         child: Text('Cancel',
                             style: TextStyle(color: Colors.white)),
@@ -320,6 +369,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
       );
     } catch (e) {
+      Log.e(e);
       return Scaffold(body: Text(e.toString()));
     }
   }
