@@ -40,8 +40,8 @@ In the path ./sparklingapp/android/app, modify the "flutter.minSdkVersion" in "b
 ![Android minisdkversion ](./files/android_minisdkversion.png)
 
 ## Configure the debug mode:
-	The DebugCfg class in the path lib/Configuration/Global.dart file is used to configure debugging-related configuration. If isDebug is true, it means the camera is currently in debug mode; false is not debug mode. In debug mode, the camera will automatically switch to support reading photos from albums.
-	When running on a cell phone, it is recommended to set idDebug to false.
+The DebugCfg class in the path lib/Configuration/Global.dart file is used to configure debugging-related configuration. If isDebug is true, it means the camera is currently in debug mode; false is not debug mode. In debug mode, the camera will automatically switch to support reading photos from albums.
+When running on a cell phone, it is recommended to set idDebug to false.
 ![Debug configuration ](./files/debug_configuration.png)
 
 ## Start the Emulator:
