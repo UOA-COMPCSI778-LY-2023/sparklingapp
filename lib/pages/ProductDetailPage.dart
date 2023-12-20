@@ -207,6 +207,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           itemCount: ingridientsList.length,
                           itemBuilder: (BuildContext context, int index) {
+                            String strAmount = "";
+                            strAmount = ingridientsList[index]
+                                    ["percent_estimate"]
+                                .toString();
+                            if (strAmount != "") {
+                              double amount = double.parse(strAmount);
+                              strAmount = amount.toStringAsFixed(1);
+                            }
                             return Container(
                               margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                               height: 25,
@@ -224,12 +232,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      ingridientsList[index]["percent_estimate"]
-                                              .toString() +
-                                          " g",
+                                      strAmount + " g",
                                       style: TextStyle(color: Colors.white),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
+                                      textAlign: TextAlign.right,
                                     ),
                                   ),
                                 ],

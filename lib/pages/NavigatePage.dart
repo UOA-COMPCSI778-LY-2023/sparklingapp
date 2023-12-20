@@ -3,6 +3,7 @@ import '../components/Button.dart';
 import '../components/Router.dart';
 import 'HomePage.dart';
 import 'ScanPage.dart';
+import 'object_detector_view.dart';
 
 class NavigatePage extends StatefulWidget {
   const NavigatePage({Key? key}) : super(key: key);

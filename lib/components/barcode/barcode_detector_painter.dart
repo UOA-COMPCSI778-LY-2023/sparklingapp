@@ -39,7 +39,7 @@ class BarcodeDetectorPainter extends CustomPainter {
       );
       builder
           .pushStyle(ui.TextStyle(color: Colors.green, background: background));
-      builder.addText('${barcode.displayValue}');
+      //builder.addText('${barcode.displayValue}');
       builder.pop();
 
       final left = translateX(
