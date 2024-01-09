@@ -41,8 +41,9 @@ class _NavigatePageState extends State<NavigatePage> {
         },
       ),
       floatingActionButtonAnimator: scalingAnimation(),
-      floatingActionButtonLocation: CustomFloatingActionButtonLocation(
-          FloatingActionButtonLocation.centerDocked, 0, 30),
+      floatingActionButtonLocation: CustomFloatingActionButtonFactory(
+              FloatingActionButtonLocation.centerDocked, 0, 30)
+          .createLocation(),
       body: Stack(
         children: [
           IndexedStack(

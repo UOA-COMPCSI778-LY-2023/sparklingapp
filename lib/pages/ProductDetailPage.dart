@@ -339,7 +339,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             });
                             Navigator.pop(context);
                           } catch (e) {
-                            Log.e(e);
+                            Log.instance.e(e);
                             Toast.toast(context,
                                 msg: "${e.toString()}",
                                 position: ToastPostion.bottom);
@@ -376,7 +376,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
       );
     } catch (e) {
-      Log.e(e);
+      Log.instance.e(e);
       return Scaffold(body: Text(e.toString()));
     }
   }

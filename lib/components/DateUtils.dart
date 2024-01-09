@@ -36,7 +36,7 @@ class MyDateUtils {
     if (date != null) {
       return DateFormat("HH:mm:ss").format(date);
     } else {
-      Log.wtf("Null value：${date}");
+      Log.instance.wtf("Null value：${date}");
       return DateFormat("yyyy-MM-dd").format(DateTime.now());
     }
   }
@@ -45,7 +45,7 @@ class MyDateUtils {
     if (date != null) {
       return DateFormat("yyyy-MM-dd").format(date);
     } else {
-      Log.wtf("Null value：${date}");
+      Log.instance.wtf("Null value：${date}");
       return DateFormat("yyyy-MM-dd").format(DateTime.now());
     }
   }

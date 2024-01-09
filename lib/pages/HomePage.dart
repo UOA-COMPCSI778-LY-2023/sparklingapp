@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
             double.parse(alreadyTodaySugarIntake);
       });
     } catch (e) {
-      Log.e(e);
+      Log.instance.e(e);
     }
   }
 

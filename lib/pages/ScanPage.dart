@@ -32,7 +32,9 @@ class _ScanPageState extends State<ScanPage> {
         String api = APIList.openFoodAPI["getFoodByBarcode"];
         String url = api.replaceAll('{0}', barcode);
         DateTime beginTime = DateTime.now();
-        Map productData = await MyHttpRequest.sendFutureGetRequest(url);
+        // Map productData = await MyHttpRequest.sendFutureGetRequest(url);
+        Map productData =
+            await MyHttpRequest.instance.sendFutureGetRequest(url);
         DateTime endTime = DateTime.now();
         if (products[barcode] == null) {
           products[barcode] = productData;

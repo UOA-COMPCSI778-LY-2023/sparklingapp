@@ -1,5 +1,32 @@
 import 'package:flutter/material.dart';
 
+// Abstract factory interface
+abstract class FloatingActionButtonFactory {
+  FloatingActionButtonLocation createLocation();
+  FloatingActionButtonAnimator createAnimator();
+}
+
+// Concrete factory for CustomFloatingActionButton
+class CustomFloatingActionButtonFactory implements FloatingActionButtonFactory {
+  final double offsetX;
+  final double offsetY;
+  final FloatingActionButtonLocation abLocation;
+
+  CustomFloatingActionButtonFactory(
+      this.abLocation, this.offsetX, this.offsetY);
+
+  @override
+  CustomFloatingActionButtonLocation createLocation() {
+    // Providing a standard FloatingActionButtonLocation instance
+    return CustomFloatingActionButtonLocation(abLocation, offsetX, offsetY);
+  }
+
+  @override
+  scalingAnimation createAnimator() {
+    return scalingAnimation();
+  }
+}
+
 class CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
   FloatingActionButtonLocation location;
   double offsetX;
