@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as services;
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 
+import '../interface/ImageProcessor.dart';
+
 /// An object detector and tracker that detects objects in an [InputImage] and supports tracking them.
-class ObjectDetector {
+class ObjectDetector implements ImageProcessor {
   static const services.MethodChannel _channel =
       services.MethodChannel('google_mlkit_object_detector');
 
@@ -16,7 +18,7 @@ class ObjectDetector {
   /// Constructor to create an instance of [ObjectDetector].
   ObjectDetector({required this.options});
 
-  /// Processes the given image for object detection and tracking.
+  @override
   Future<List<DetectedObject>> processImage(InputImage inputImage) async {
     final result = await _channel.invokeMethod(
         'vision#startObjectDetector', <String, dynamic>{
