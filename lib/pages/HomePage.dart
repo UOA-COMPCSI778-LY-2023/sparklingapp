@@ -5,13 +5,14 @@ import '../Configuration/Global.dart';
 import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
 import '../components/Toast.dart';
+import '../interface/PageStateTemplate.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends PageStateTemplate {
   void loadTodaySugar() {
     try {
       String today = MyDateUtils.formatToyyyMMdd(DateTime.now());
@@ -31,256 +32,254 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    loadTodaySugar();
+  AppBar buildAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: Text(
+        "Home",
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.black,
+      centerTitle: false,
+      elevation: 0,
+      actions: [
+        CircleAvatar(
+          radius: 20,
+          backgroundImage: AssetImage('assets/userhead.jpeg'),
+        ),
+      ],
+    );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildPageBody() {
     double contentHeight = MediaQuery.of(context).size.height - 220 - 200;
     if (contentHeight < 60) contentHeight = 60;
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          "Home",
-          style: TextStyle(color: Colors.white),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 20,
+            ),
+            Text(
+              "Hello Dean",
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Colors.white, fontSize: 36),
+            )
+          ],
         ),
-        backgroundColor: Colors.black,
-        centerTitle: false,
-        elevation: 0,
-        actions: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: AssetImage('assets/userhead.jpeg'),
-          ),
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 20,
+        Column(
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: 40,
+                ),
+                Text("Today",
+                    style: TextStyle(color: Colors.white, fontSize: 24))
+              ],
+            ),
+            ValueListenableBuilder<double>(
+                valueListenable: TempData.todaySugarIntakeTotal,
+                builder: (c, ac, _) {
+                  double targetSugarNum = 100;
+                  double currentSugarRate = 0;
+                  if (targetSugarNum > 0) {
+                    currentSugarRate = (TempData.todaySugarIntakeTotal.value /
+                            targetSugarNum) *
+                        100;
+                  }
+                  if (currentSugarRate > 100) {
+                    currentSugarRate = 100;
+                  }
+                  return Container(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 74, 73, 73),
+                      borderRadius: BorderRadius.circular(20), // 设置圆角的大小
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Current Daily Surgar Intake is",
+                                style: TextStyle(color: Colors.white)),
+                            CircleWidget(),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text("${currentSugarRate}%",
+                                    style: TextStyle(color: Colors.white))
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomProgressBar(
+                                  progress: currentSugarRate / 100,
+                                  color: currentSugarRate > 80
+                                      ? Colors.red
+                                      : currentSugarRate > 50
+                                          ? Colors.orange
+                                          : Colors.green,
+                                  height: 20,
+                                  width: 250,
+                                ),
+                                Text("${targetSugarNum} g",
+                                    style: TextStyle(color: Colors.green))
+                              ],
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                })
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
+              margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 74, 73, 73),
+                borderRadius: BorderRadius.circular(20),
               ),
-              Text(
-                "Hello Dean",
-                textAlign: TextAlign.left,
-                style: TextStyle(color: Colors.white, fontSize: 36),
-              )
-            ],
-          ),
-          Column(
-            children: [
-              Row(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                    width: 40,
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: Colors.red,
+                    child: Text(
+                      "1",
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  Text("Today",
-                      style: TextStyle(color: Colors.white, fontSize: 24))
+                  Text("Beverage", style: TextStyle(color: Colors.white)),
+                  CustomProgressBar(
+                    progress: 0.35,
+                    color: Colors.blue,
+                    height: 5,
+                    width: 120,
+                  ),
+                  Container(
+                    width: 60,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "35%",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
               ),
-              ValueListenableBuilder<double>(
-                  valueListenable: TempData.todaySugarIntakeTotal,
-                  builder: (c, ac, _) {
-                    double targetSugarNum = 100;
-                    double currentSugarRate = 0;
-                    if (targetSugarNum > 0) {
-                      currentSugarRate = (TempData.todaySugarIntakeTotal.value /
-                              targetSugarNum) *
-                          100;
-                    }
-                    if (currentSugarRate > 100) {
-                      currentSugarRate = 100;
-                    }
-                    return Container(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 74, 73, 73),
-                        borderRadius: BorderRadius.circular(20), // 设置圆角的大小
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Current Daily Surgar Intake is",
-                                  style: TextStyle(color: Colors.white)),
-                              CircleWidget(),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text("${currentSugarRate}%",
-                                      style: TextStyle(color: Colors.white))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CustomProgressBar(
-                                    progress: currentSugarRate / 100,
-                                    color: currentSugarRate > 80
-                                        ? Colors.red
-                                        : currentSugarRate > 50
-                                            ? Colors.orange
-                                            : Colors.green,
-                                    height: 20,
-                                    width: 250,
-                                  ),
-                                  Text("${targetSugarNum} g",
-                                      style: TextStyle(color: Colors.green))
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  })
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
-                margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 74, 73, 73),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      color: Colors.red,
-                      child: Text(
-                        "1",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Text("Beverage", style: TextStyle(color: Colors.white)),
-                    CustomProgressBar(
-                      progress: 0.35,
-                      color: Colors.blue,
-                      height: 5,
-                      width: 120,
-                    ),
-                    Container(
-                      width: 60,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "35%",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
+              margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 74, 73, 73),
+                borderRadius: BorderRadius.circular(20),
               ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
-                margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 74, 73, 73),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: Colors.orange,
+                    child: Text(
+                      "2",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Text("Fruits", style: TextStyle(color: Colors.white)),
+                  CustomProgressBar(
+                    progress: 0.15,
+                    color: Colors.blue,
+                    height: 5,
+                    width: 120,
+                  ),
+                  Container(
+                    width: 60,
+                    height: 20,
+                    decoration: BoxDecoration(
                       color: Colors.orange,
-                      child: Text(
-                        "2",
-                        textAlign: TextAlign.center,
-                      ),
+                      borderRadius: BorderRadius.circular(20), // 设置圆角的大小
                     ),
-                    Text("Fruits", style: TextStyle(color: Colors.white)),
-                    CustomProgressBar(
-                      progress: 0.15,
-                      color: Colors.blue,
-                      height: 5,
-                      width: 120,
+                    child: Text(
+                      "15%",
+                      textAlign: TextAlign.center,
                     ),
-                    Container(
-                      width: 60,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(20), // 设置圆角的大小
-                      ),
-                      child: Text(
-                        "15%",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
-                margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 74, 73, 73),
-                  borderRadius: BorderRadius.circular(20), // 设置圆角的大小
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
+              margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 74, 73, 73),
+                borderRadius: BorderRadius.circular(20), // 设置圆角的大小
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: Colors.yellow,
+                    child: Text(
+                      "3",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Text("Breads", style: TextStyle(color: Colors.white)),
+                  CustomProgressBar(
+                    progress: 0.1,
+                    color: Colors.blue,
+                    height: 5,
+                    width: 120,
+                  ),
+                  Container(
+                    width: 60,
+                    height: 20,
+                    decoration: BoxDecoration(
                       color: Colors.yellow,
-                      child: Text(
-                        "3",
-                        textAlign: TextAlign.center,
-                      ),
+                      borderRadius: BorderRadius.circular(20), // 设置圆角的大小
                     ),
-                    Text("Breads", style: TextStyle(color: Colors.white)),
-                    CustomProgressBar(
-                      progress: 0.1,
-                      color: Colors.blue,
-                      height: 5,
-                      width: 120,
+                    child: Text(
+                      "10%",
+                      textAlign: TextAlign.center,
                     ),
-                    Container(
-                      width: 60,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        borderRadius: BorderRadius.circular(20), // 设置圆角的大小
-                      ),
-                      child: Text(
-                        "10%",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          )
-        ],
-      ),
+            ),
+          ],
+        )
+      ],
     );
+  }
+
+  @override
+  void specificInit() {
+    loadTodaySugar();
   }
 }
 
