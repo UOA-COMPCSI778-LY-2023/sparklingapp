@@ -1,8 +1,10 @@
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:sugatiol/Configuration/Global.dart';
 
+import '../Business/GetProductInfoFromOpenFood.dart';
 import '../Configuration/APIList.dart';
 import '../components/MyHttpRequest.dart';
 import '../components/Router.dart';
@@ -31,11 +33,14 @@ class _ScanPageState extends State<ScanPage> {
       if (products[barcode] == null) {
         String api = APIList.openFoodAPI["getFoodByBarcode"];
         String url = api.replaceAll('{0}', barcode);
-        DateTime beginTime = DateTime.now();
-        // Map productData = await MyHttpRequest.sendFutureGetRequest(url);
-        Map productData =
-            await MyHttpRequest.instance.sendFutureGetRequest(url);
-        DateTime endTime = DateTime.now();
+
+        // 使用 ConcreteHandlerA 发送请求
+        GetProductInfoFromOpenFood getProductInfoFromOpenFood =
+            GetProductInfoFromOpenFood();
+        Response response = await MyHttpRequest.instance
+            .sendRequest(url, {}, getProductInfoFromOpenFood);
+
+        Map productData = response.data;
         if (products[barcode] == null) {
           products[barcode] = productData;
           setState(() {});
