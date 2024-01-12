@@ -1,4 +1,4 @@
-# sparklingapp
+# Sparklingapp
 
 SParklingAPP is an internship program at UoA. It is an app that helps users control their sugar intake.
 
