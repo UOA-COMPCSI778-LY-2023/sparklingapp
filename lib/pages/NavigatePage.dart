@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../components/Button.dart';
 import '../components/Router.dart';
+import 'HistoryPage.dart';
 import 'HomePage.dart';
+import 'ReportPage.dart';
 import 'ScanPage.dart';
+import 'TodayIntakePage.dart';
 import 'object_detector_view.dart';
 
 class NavigatePage extends StatefulWidget {
@@ -16,10 +19,10 @@ class _NavigatePageState extends State<NavigatePage> {
   int _currentIndex = 0;
   final List<Widget> _pageList = [
     HomePage(),
-    HomePage(),
+    TodayIntakePage(),
     Text(" "),
-    HomePage(),
-    HomePage(),
+    HistoryPage(),
+    ReportPage(),
   ];
 
   @override
