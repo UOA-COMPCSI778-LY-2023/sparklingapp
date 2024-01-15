@@ -16,7 +16,9 @@ class _NavigatePageState extends State<NavigatePage> {
   int _currentIndex = 0;
   final List<Widget> _pageList = [
     HomePage(),
+    HomePage(),
     Text(" "),
+    HomePage(),
     HomePage(),
   ];
 
@@ -31,10 +33,10 @@ class _NavigatePageState extends State<NavigatePage> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        shape: CircleBorder(side: BorderSide(color: Colors.black)),
+        backgroundColor: Colors.black87,
+        shape: CircleBorder(side: BorderSide(color: Colors.grey)),
         elevation: 0,
-        child: Icon(Icons.document_scanner, color: Colors.white),
+        child: Icon(Icons.add, color: Colors.white),
         onPressed: () {
           Navigator.of(context)
               .push<void>(MyRouter.createRoute(ScanPage(), "bottom"));
@@ -63,12 +65,17 @@ class _NavigatePageState extends State<NavigatePage> {
         },
         //iconSize: 18.0,
         fixedColor: Colors.blue,
-        unselectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: (" ")),
-          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: (" ")),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: (" ")),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ("Home")),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month), label: ("Today")),
+          BottomNavigationBarItem(icon: Icon(Icons.plus_one), label: (" ")),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.history), label: ("History")),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.description), label: ("Report")),
         ],
       ),
     );
