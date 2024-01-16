@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Business/GetSugarIntakeToday.dart';
 
+import '../Configuration/APIList.dart';
 import '../Configuration/Global.dart';
 import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
+import '../components/MyHttpRequest.dart';
 import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
 
@@ -13,19 +17,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends PageStateTemplate {
-  void loadTodaySugar() {
+  Future<void> getSugarIntakeToday() async {
     try {
-      String today = MyDateUtils.formatToyyyMMdd(DateTime.now());
-      SharedPreferences.getInstance().then((prefs) {
-        String alreadyTodaySugarIntake = "0";
-        if (prefs.getString(PreferencesCfg.todaySugarIntake + today) != null) {
-          alreadyTodaySugarIntake = prefs
-              .getString(PreferencesCfg.todaySugarIntake + today)
-              .toString();
-        }
-        TempData.todaySugarIntakeTotal.value =
-            double.parse(alreadyTodaySugarIntake);
-      });
+      String api = APIList.lightSugarAPI["getSugarIntakeToday"];
+      GetSugarIntakeToday getSugarIntakeToday = GetSugarIntakeToday();
+      Response response = await MyHttpRequest.instance
+          .sendRequest(api, {}, getSugarIntakeToday);
+
+      if (response.data["ack"] == "success") {
+        double sugarToday = (response.data['sugarToday'] as num).toDouble();
+        TempData.todaySugarIntakeTotal.value = sugarToday;
+      }
     } catch (e) {
       Log.instance.e(e);
     }
@@ -279,7 +281,7 @@ class _HomePageState extends PageStateTemplate {
 
   @override
   void specificInit() {
-    loadTodaySugar();
+    getSugarIntakeToday();
   }
 }
 

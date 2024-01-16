@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'IntakeLimitEditPage.dart';
 import 'NavigatePage.dart';
 
 class StartPage extends StatelessWidget {
@@ -78,7 +79,7 @@ class StartPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const NavigatePage()),
+                  MaterialPageRoute(builder: (context) => IntakeLimitEditPage()),
                 );
               },
               style: ElevatedButton.styleFrom(
