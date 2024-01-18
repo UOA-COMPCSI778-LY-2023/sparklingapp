@@ -1,5 +1,5 @@
 class APIList {
-  static const String _ip = "192.168.63.203";
+  static const String _ip = "127.0.0.1";
   static Map openFoodAPI = {
     "getFoodByBarcode": "https://world.openfoodfacts.org/api/v3/product/{0}",
   };
