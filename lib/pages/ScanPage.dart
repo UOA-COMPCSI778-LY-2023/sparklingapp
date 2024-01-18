@@ -34,13 +34,11 @@ class _ScanPageState extends PageStateTemplate {
       if (products[barcode] == null) {
         String api = APIList.openFoodAPI["getFoodByBarcode"];
         String url = api.replaceAll('{0}', barcode);
-
         // 使用 ConcreteHandlerA 发送请求
         GetProductInfoFromOpenFood getProductInfoFromOpenFood =
             GetProductInfoFromOpenFood();
         Response response = await MyHttpRequest.instance
             .sendRequest(url, {}, getProductInfoFromOpenFood);
-
         Map productData = response.data;
         if (products[barcode] == null) {
           products[barcode] = productData;
