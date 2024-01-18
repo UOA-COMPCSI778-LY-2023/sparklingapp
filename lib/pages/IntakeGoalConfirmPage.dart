@@ -46,7 +46,10 @@ class _IntakeGoalConfirmPageState extends PageStateTemplate {
             Text(
               'Sugar Intake Goal\nhas been set!',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, color: Colors.white),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white),
             ),
             SizedBox(height: 20),
             ElevatedButton(

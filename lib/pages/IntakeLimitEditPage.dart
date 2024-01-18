@@ -6,8 +6,7 @@ import '../components/LogUtils.dart';
 import '../Configuration/APIList.dart';
 import 'IntakeGoalConfirmPage.dart';
 import 'package:dio/dio.dart';
-
-import 'IntakeGoalErrorPage.dart';
+import 'ErrorPage.dart';
 
 class IntakeLimitEditPage extends StatefulWidget {
   @override
@@ -164,7 +163,7 @@ class _IntakeLimitEditPageState extends PageStateTemplate {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  IntakeGoalErrorPage(errorMessage: response.data["message"])),
+                  ErrorPage(errorMessage: response.data["message"])),
         );
       }
     } catch (e) {

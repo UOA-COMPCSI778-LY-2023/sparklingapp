@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'NavigatePage.dart';
 import '../interface/PageStateTemplate.dart';
 
-class IntakeGoalErrorPage extends StatefulWidget {
+class ErrorPage extends StatefulWidget {
   final String errorMessage;
 
-  const IntakeGoalErrorPage({Key? key, required this.errorMessage})
+  const ErrorPage({Key? key, required this.errorMessage})
       : super(key: key);
 
   @override
-  _IntakeGoalErrorPage createState() => _IntakeGoalErrorPage(eMessage:errorMessage);
+  _ErrorPage createState() => _ErrorPage(eMessage:errorMessage);
 }
 
-class _IntakeGoalErrorPage extends PageStateTemplate {
+class _ErrorPage extends PageStateTemplate {
   final String eMessage;
 
-  _IntakeGoalErrorPage({required this.eMessage});
+  _ErrorPage({required this.eMessage});
 
   @override
   void specificInit() {
@@ -68,19 +68,10 @@ class _IntakeGoalErrorPage extends PageStateTemplate {
                 );
               },
               child:
-                  Text('Back to home', style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Try again', style: TextStyle(color: Colors.white)),
+                  Text('Back to home', style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
