@@ -9,18 +9,25 @@ import 'package:dio/dio.dart';
 import 'ErrorPage.dart';
 
 class IntakeLimitEditPage extends StatefulWidget {
+  final double sugarTarget;
+
+  const IntakeLimitEditPage({Key? key, required this.sugarTarget}) : super(key: key);
+
   @override
-  IntakeLimitEditPage({Key? key}) : super(key: key);
-  _IntakeLimitEditPageState createState() => _IntakeLimitEditPageState();
+  _IntakeLimitEditPageState createState() => _IntakeLimitEditPageState(sTarget:sugarTarget);
 }
 
 class _IntakeLimitEditPageState extends PageStateTemplate {
+  final double sTarget;
+
+  _IntakeLimitEditPageState({required this.sTarget});
+
   final TextEditingController _controller = TextEditingController();
 
   @override
   void specificInit() {
     _controller.text =
-        '100'; // Initialize the text field with the current sugar limit
+        sTarget.toString(); // Initialize the text field with the current sugar limit
   }
 
   @override

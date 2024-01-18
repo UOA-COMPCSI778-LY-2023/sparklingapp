@@ -93,13 +93,9 @@ class _HomePageState extends PageStateTemplate {
         setState(() {
           predictionFood = response.data['predictions'];
         });
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ErrorPage(errorMessage: response.data["message"])),
-        );
+      } else if(response.data["ack"] == "failure" && 
+        response.data["message"] == "No food data available for this time interval."){
+          predictionFood = [];
       }
     } catch (e) {
       Log.instance.e(e);
@@ -190,7 +186,7 @@ class _HomePageState extends PageStateTemplate {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => IntakeLimitEditPage()),
+                            builder: (context) => IntakeLimitEditPage(sugarTarget: targetSugarNum)),
                       );
                     },
                     child: Text("Set Target",
