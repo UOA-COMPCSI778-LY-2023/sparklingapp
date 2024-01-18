@@ -14,6 +14,7 @@ import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
 import 'ErrorPage.dart';
 import 'IntakeLimitEditPage.dart';
+import 'OneClickConfirmPage.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -119,6 +120,10 @@ class _HomePageState extends PageStateTemplate {
       if (response.data["ack"] == "success") {
         await getSugarIntakeToday();
         setState(() {});
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OneClickConfirmPage()),
+      );
       } else if (response.data["ack"] == "failure"){
         Navigator.push(
           context,

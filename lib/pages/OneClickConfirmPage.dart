@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'NavigatePage.dart';
 import '../interface/PageStateTemplate.dart';
 
-class IntakeGoalConfirmPage extends StatefulWidget {
+class OneClickConfirmPage extends StatefulWidget {
   @override
-  _IntakeGoalConfirmPageState createState() => _IntakeGoalConfirmPageState();
+  _OneClickConfirmPageState createState() => _OneClickConfirmPageState();
 }
 
-class _IntakeGoalConfirmPageState extends PageStateTemplate {
+class _OneClickConfirmPageState extends PageStateTemplate {
   @override
   void specificInit() {
   }
@@ -15,8 +15,12 @@ class _IntakeGoalConfirmPageState extends PageStateTemplate {
   @override
   AppBar buildAppBar() {
     return AppBar(
-      automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
       backgroundColor: Colors.black,
+      elevation: 0,
     );
   }
 
@@ -40,7 +44,7 @@ class _IntakeGoalConfirmPageState extends PageStateTemplate {
             ),
             SizedBox(height: 20),
             Text(
-              'Sugar Intake Goal\nhas been set!',
+              'Sugar Intake added!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24,
