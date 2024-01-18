@@ -15,12 +15,8 @@ class _IntakeGoalConfirmPageState extends PageStateTemplate {
   @override
   AppBar buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.black,
-      elevation: 0,
     );
   }
 
