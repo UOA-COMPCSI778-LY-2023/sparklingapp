@@ -157,15 +157,12 @@ class _IntakeLimitEditPageState extends PageStateTemplate {
       SetSugarTarget setSugarTarget = SetSugarTarget(parameters);
       Response response = await MyHttpRequest.instance
           .sendRequest(api, parameters, setSugarTarget);
-      // 检查响应状态和内容
       if (response.data["ack"] == "success") {
-        // 成功响应，导航到确认页面
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => IntakeGoalConfirmPage()),
         );
       } else if (response.data["ack"] == "failure") {
-        // 失败响应，导航到错误页面
         Navigator.push(
           context,
           MaterialPageRoute(

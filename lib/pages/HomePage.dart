@@ -13,6 +13,7 @@ import '../components/MyHttpRequest.dart';
 import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
 import 'ErrorPage.dart';
+import 'IntakeAddConfirmPage.dart';
 import 'IntakeLimitEditPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -119,6 +120,10 @@ class _HomePageState extends PageStateTemplate {
       if (response.data["ack"] == "success") {
         await getSugarIntakeToday();
         setState(() {});
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => IntakeAddConfirmPage()),
+      );
       } else if (response.data["ack"] == "failure"){
         Navigator.push(
           context,
