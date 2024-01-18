@@ -27,5 +27,5 @@ abstract class PageStateTemplate extends State<StatefulWidget> {
 
   Widget buildPageBody();
 
-  AppBar buildAppBar();
+  AppBar? buildAppBar();
 }
