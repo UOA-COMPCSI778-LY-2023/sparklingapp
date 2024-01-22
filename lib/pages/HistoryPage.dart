@@ -82,7 +82,7 @@ class _HistoryPageState extends PageStateTemplate {
             itemBuilder: (context, index) {
               var record = intakeListLastWeek[index]['food'];
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                   color: Color.fromRGBO(58, 58, 58, 1),
                   borderRadius: BorderRadius.circular(10),
