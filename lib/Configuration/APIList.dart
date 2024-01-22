@@ -11,5 +11,7 @@ class APIList {
     "getIntakePrediction": "http://$_ip:$_port/users/jnz121/intake-prediction",
     "addSugarIntake": "http://$_ip:$_port/users/sugar-intake/add",
     "get7daysSugar": "http://$_ip:$_port/users/jnz121/report/7",
+    "getIntakeListLastWeek":
+        "http://$_ip:3000/users/jnz121/intakes-list-weekly",
   };
 }

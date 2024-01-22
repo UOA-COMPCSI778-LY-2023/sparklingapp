@@ -1,31 +1,46 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Business/GetIntakeListLastWeek.dart';
+import '../Configuration/APIList.dart';
 import '../Configuration/Global.dart';
 import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
+import '../components/MyHttpRequest.dart';
 import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
+import 'ErrorPage.dart';
+import 'ProductDetailPage.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key? key}) : super(key: key);
+
+  @override
   _HistoryPageState createState() => _HistoryPageState();
 }
 
 class _HistoryPageState extends PageStateTemplate {
-  void loadTodaySugar() {
+  List<dynamic> intakeListLastWeek = [];
+
+  Future<void> getIntakeListLastWeek() async {
     try {
-      String today = MyDateUtils.formatToyyyMMdd(DateTime.now());
-      SharedPreferences.getInstance().then((prefs) {
-        String alreadyTodaySugarIntake = "0";
-        if (prefs.getString(PreferencesCfg.todaySugarIntake + today) != null) {
-          alreadyTodaySugarIntake = prefs
-              .getString(PreferencesCfg.todaySugarIntake + today)
-              .toString();
-        }
-        TempData.todaySugarIntakeTotal.value =
-            double.parse(alreadyTodaySugarIntake);
-      });
+      String api = APIList.lightSugarAPI["getIntakeListLastWeek"];
+      GetIntakeListLastWeek getIntakeListLastWeek = GetIntakeListLastWeek();
+      Response response = await MyHttpRequest.instance
+          .sendRequest(api, {}, getIntakeListLastWeek);
+      if (response.data["ack"] == "success") {
+        setState(() {
+          intakeListLastWeek = response.data['list'];
+        });
+      } else if (response.data["ack"] == "failure") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ErrorPage(errorMessage: response.data["message"])),
+        );
+      }
     } catch (e) {
       Log.instance.e(e);
     }
@@ -36,8 +51,8 @@ class _HistoryPageState extends PageStateTemplate {
     return AppBar(
       automaticallyImplyLeading: false,
       title: Text(
-        "Scanning History",
-        style: TextStyle(color: Colors.white),
+        "Intake History",
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
       backgroundColor: Colors.black,
       centerTitle: true,
@@ -55,21 +70,93 @@ class _HistoryPageState extends PageStateTemplate {
   Widget buildPageBody() {
     double contentHeight = MediaQuery.of(context).size.height - 220 - 200;
     if (contentHeight < 60) contentHeight = 60;
+    Divider(color: Colors.white);
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              "Content",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.white, fontSize: 36),
-            )
-          ],
+      children: <Widget>[
+        Divider(color: Color.fromRGBO(43, 43, 43, 1), thickness: 2),
+        SizedBox(height: 10),
+        Expanded(
+          child: ListView.separated(
+            itemCount: intakeListLastWeek.length,
+            separatorBuilder: (context, index) => SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              var record = intakeListLastWeek[index]['food'];
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(58, 58, 58, 1),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    // ... shadow decoration ...
+                  ],
+                ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                        flex:
+                            2, // You can adjust this flex factor as needed for image to text ratio
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(10)),
+                          child: Image.network(
+                            record['img_url'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12), // Add space between image and text
+                      Expanded(
+                        flex:
+                            5, // Adjust the flex factor as needed for the ratio of the text section
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                record['product_name'],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProductDetailPage(
+                                            productDetailData: record),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('Details',
+                                      style: TextStyle(color: Colors.white)),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
@@ -77,7 +164,7 @@ class _HistoryPageState extends PageStateTemplate {
 
   @override
   void specificInit() {
-    loadTodaySugar();
+    getIntakeListLastWeek();
   }
 }
 
