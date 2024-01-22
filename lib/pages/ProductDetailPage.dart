@@ -49,8 +49,8 @@ class _ProductDetailPageState extends PageStateTemplate {
     final size = MediaQuery.of(context).size;
 
     String imgUrl = "";
-    if (productDetailData["image_front_url"] != null) {
-      imgUrl = productDetailData["image_front_url"];
+    if (productDetailData["img_url"] != null) {
+      imgUrl = productDetailData["img_url"];
     }
     List ingridientsList = [];
     if (productDetailData["ingredients"] != null) {
@@ -61,8 +61,10 @@ class _ProductDetailPageState extends PageStateTemplate {
       nutriments = productDetailData["nutriments"];
     }
     double sugarNum = 0;
-    if (nutriments["sugars"] != null) {
-      sugarNum = double.parse(nutriments["sugars"].toString());
+    double sugarTotal = 0;
+    if (nutriments["sugars_serving"] != null) {
+      sugarTotal = nutriments["sugars_serving"] * productDetailData['serving_per_pack'];
+      sugarNum = double.parse(sugarTotal.toString());
     }
     int sugarCubs = (sugarNum / 4.5).ceil();
     return Stack(

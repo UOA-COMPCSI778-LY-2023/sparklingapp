@@ -1,5 +1,5 @@
 class APIList {
-  static const String _ip = "172.23.60.144";
+  static const String _ip = "172.23.59.18";
   static Map openFoodAPI = {
     "getFoodByBarcode": "https://world.openfoodfacts.org/api/v3/product/{0}",
   };
@@ -8,6 +8,7 @@ class APIList {
     "getSugarTarget": "http://$_ip:3000/users/jnz121/target",
     "getSugarIntakeToday": "http://$_ip:3000/users/jnz121/sugar-intake-today",
     "getIntakePrediction": "http://$_ip:3000/users/jnz121/intake-prediction",
-    "addSugarIntake": "http://$_ip:3000/users/sugar-intake/add"
+    "addSugarIntake": "http://$_ip:3000/users/sugar-intake/add",
+    "getIntakeListLastWeek": "http://$_ip:3000/users/jnz121/intakes-list-weekly",
   };
 }
