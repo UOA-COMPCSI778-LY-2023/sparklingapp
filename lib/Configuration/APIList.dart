@@ -10,5 +10,7 @@ class APIList {
     "getIntakePrediction": "http://$_ip:3000/users/jnz121/intake-prediction",
     "addSugarIntake": "http://$_ip:3000/users/sugar-intake/add",
     "getIntakeListLastWeek": "http://$_ip:3000/users/jnz121/intakes-list-weekly",
+    "listSugarIntakesToday": "http://$_ip:3000/users/jnz121/intakes-list-today",
+    "removeSugarIntake": "http://$_ip:3000/users/sugar-intake/remove",
   };
 }

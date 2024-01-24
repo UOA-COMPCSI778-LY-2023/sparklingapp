@@ -164,19 +164,6 @@ class _HomePageState extends PageStateTemplate {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              "Hello Dean",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.white, fontSize: 36),
-            )
-          ],
-        ),
         Column(
           children: [
             Padding(
