@@ -88,9 +88,14 @@ class _ProductDetailPageState extends PageStateTemplate {
     int sugarCubs = (sugarNum / 4.5).ceil();
 
     int qtyNumber = productDetailData["serving_qty"];
+    double qtyPer = double.parse(
+        productDetailData["nutriments"]["sugars_serving"].toString());
+
+    ValueNotifier<double> qtyValue = ValueNotifier(qtyPer);
 
     void _handleValueChanged(int newValue) {
       qtyNumber = newValue;
+      qtyValue.value = qtyPer * qtyNumber;
     }
 
     return Stack(
@@ -305,10 +310,18 @@ class _ProductDetailPageState extends PageStateTemplate {
                             "Serving Size",
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
-                          Text(
-                            "250 ml",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
+                          ValueListenableBuilder<double>(
+                              valueListenable: qtyValue,
+                              builder: (c, ac, _) {
+                                return Text(
+                                  ac.toString() +
+                                      " " +
+                                      productDetailData["serving_unit"]
+                                          .toString(),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                );
+                              }),
                         ])
                   ]),
                 ),
@@ -405,8 +418,6 @@ class _ProductDetailPageState extends PageStateTemplate {
                   child: ElevatedButton(
                     onPressed: () {
                       try {
-                        String today =
-                            MyDateUtils.formatToyyyMMdd(DateTime.now());
                         CommonBizLogic.addSugarIntake(
                             productDetailData["code"], qtyNumber);
                         Navigator.pop(context);
@@ -415,6 +426,7 @@ class _ProductDetailPageState extends PageStateTemplate {
                             MaterialPageRoute(
                                 builder: (context) => OneClickConfirmPage(
                                     msg: "Sugar Intake added!")));
+                        CommonBizLogic.getSugarIntakeToday();
                       } catch (e) {
                         Log.instance.e(e);
                         Toast.toast(context,
