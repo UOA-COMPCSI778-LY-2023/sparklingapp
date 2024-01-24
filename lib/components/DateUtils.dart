@@ -50,6 +50,15 @@ class MyDateUtils {
     }
   }
 
+  static String formatToddMMyyy(DateTime date) {
+    if (date != null) {
+      return DateFormat("dd/MM/yyyy").format(date);
+    } else {
+      Log.instance.wtf("Null value：${date}");
+      return DateFormat("dd/MM/yyyy").format(DateTime.now());
+    }
+  }
+
   /**
  * yyy-MM-dd，If no time then automately adding 00:00
  */

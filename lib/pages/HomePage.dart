@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sugatiol/components/CommonBizLogic.dart';
 import '../Business/AddSugarIntake.dart';
 import '../Business/GetIntakePrediction.dart';
 import '../Business/GetSugarIntakeToday.dart';
@@ -94,48 +95,49 @@ class _HomePageState extends PageStateTemplate {
         setState(() {
           predictionFood = response.data['predictions'];
         });
-      } else if(response.data["ack"] == "failure" && 
-        response.data["message"] == "No food data available for this time interval."){
-          predictionFood = [];
+      } else if (response.data["ack"] == "failure" &&
+          response.data["message"] ==
+              "No food data available for this time interval.") {
+        predictionFood = [];
       }
     } catch (e) {
       Log.instance.e(e);
     }
   }
 
-  Future<void> addSugarIntake(String code, int servingCount) async {
-    Map<String, dynamic> parameters = {
-      "username": "jnz121",
-      "date": DateTime.now().toIso8601String(),
-      "code": code,
-      "serving_count": servingCount
-    };
+  // Future<void> addSugarIntake(String code, int servingCount) async {
+  //   Map<String, dynamic> parameters = {
+  //     "username": "jnz121",
+  //     "date": DateTime.now().toIso8601String(),
+  //     "code": code,
+  //     "serving_count": servingCount
+  //   };
 
-    try {
-      String api = APIList.lightSugarAPI["addSugarIntake"];
-      AddSugarIntake addSugarIntake = AddSugarIntake(parameters);
-      Response response = await MyHttpRequest.instance
-          .sendRequest(api, parameters, addSugarIntake);
+  //   try {
+  //     String api = APIList.lightSugarAPI["addSugarIntake"];
+  //     AddSugarIntake addSugarIntake = AddSugarIntake(parameters);
+  //     Response response = await MyHttpRequest.instance
+  //         .sendRequest(api, parameters, addSugarIntake);
 
-      if (response.data["ack"] == "success") {
-        await getSugarIntakeToday();
-        setState(() {});
-        Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OneClickConfirmPage()),
-      );
-      } else if (response.data["ack"] == "failure"){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ErrorPage(errorMessage: response.data["message"])),
-        );
-      }
-    } catch (e) {
-      Log.instance.e(e);
-    }
-  }
+  //     if (response.data["ack"] == "success") {
+  //       await getSugarIntakeToday();
+  //       setState(() {});
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => OneClickConfirmPage()),
+  //       );
+  //     } else if (response.data["ack"] == "failure") {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) =>
+  //                 ErrorPage(errorMessage: response.data["message"])),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Log.instance.e(e);
+  //   }
+  // }
 
   @override
   AppBar buildAppBar() {
@@ -178,7 +180,8 @@ class _HomePageState extends PageStateTemplate {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => IntakeLimitEditPage(sugarTarget: targetSugarNum)),
+                            builder: (context) => IntakeLimitEditPage(
+                                sugarTarget: targetSugarNum)),
                       );
                     },
                     child: Text("Set Target",
@@ -297,8 +300,23 @@ class _HomePageState extends PageStateTemplate {
                     icon: Icon(Icons.add),
                     color: Colors.white, // Add button to increment the serving
                     onPressed: () {
-                      addSugarIntake(predictionFood[index]['food']['code'],
-                          predictionFood[index]['mostFrequentServingCount']);
+                      try {
+                        CommonBizLogic.addSugarIntake(
+                            predictionFood[index]['food']['code'],
+                            predictionFood[index]['mostFrequentServingCount']);
+                        setState(() {});
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OneClickConfirmPage()));
+                      } catch (e) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ErrorPage(errorMessage: e.toString())),
+                        );
+                      }
                     },
                   ),
                 ),
