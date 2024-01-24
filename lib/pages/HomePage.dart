@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugatiol/components/CommonBizLogic.dart';
 import '../Business/AddSugarIntake.dart';
 import '../Business/GetIntakePrediction.dart';
@@ -299,11 +298,12 @@ class _HomePageState extends PageStateTemplate {
                   trailing: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white, // Add button to increment the serving
-                    onPressed: () {
+                    onPressed: () async {
                       try {
-                        CommonBizLogic.addSugarIntake(
+                        await CommonBizLogic.addSugarIntake(
                             predictionFood[index]['food']['code'],
                             predictionFood[index]['mostFrequentServingCount']);
+                        await CommonBizLogic.getIntakeListToday();
                         setState(() {});
                         Navigator.push(
                             context,
