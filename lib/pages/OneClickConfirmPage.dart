@@ -3,14 +3,20 @@ import 'NavigatePage.dart';
 import '../interface/PageStateTemplate.dart';
 
 class OneClickConfirmPage extends StatefulWidget {
+  String msg = "";
+  OneClickConfirmPage({Key? key, required this.msg}) : super(key: key);
   @override
-  _OneClickConfirmPageState createState() => _OneClickConfirmPageState();
+  _OneClickConfirmPageState createState() =>
+      _OneClickConfirmPageState(msg: msg);
 }
 
 class _OneClickConfirmPageState extends PageStateTemplate {
+  String msg = "";
+
+  _OneClickConfirmPageState({required this.msg});
+
   @override
-  void specificInit() {
-  }
+  void specificInit() {}
 
   @override
   AppBar buildAppBar() {
@@ -44,24 +50,21 @@ class _OneClickConfirmPageState extends PageStateTemplate {
             ),
             SizedBox(height: 20),
             Text(
-              'Sugar Intake added!',
+              msg,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NavigatePage()),
-                );
+                Navigator.pop(context);
               },
-              child: Text('OK', style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white)),
+              child: Text('OK',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(

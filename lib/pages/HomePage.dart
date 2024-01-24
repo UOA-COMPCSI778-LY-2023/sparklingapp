@@ -308,7 +308,8 @@ class _HomePageState extends PageStateTemplate {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => OneClickConfirmPage()));
+                                builder: (context) => OneClickConfirmPage(
+                                    msg: "Sugar Intake added!")));
                       } catch (e) {
                         Navigator.push(
                           context,
