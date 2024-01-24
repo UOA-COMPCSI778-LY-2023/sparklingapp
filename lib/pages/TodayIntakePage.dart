@@ -111,9 +111,8 @@ class _TodayIntakePageState extends PageStateTemplate {
                     SlidableAction(
                       onPressed: (BuildContext context) {
                         removeSugarIntake(item['_id']);
-                        double sugarDelete = item['food']['nutriments']
-                                ['sugars_serving'] *
-                            item['serving_count'];
+                        double sugarsServing = (item['food']['nutriments']['sugars_serving'] as num).toDouble();
+                        double sugarDelete = sugarsServing * item['serving_count'];
                         TempData.todaySugarIntakeTotal.value =
                             TempData.todaySugarIntakeTotal.value - sugarDelete;
                       },
@@ -197,7 +196,7 @@ class _TodayIntakePageState extends PageStateTemplate {
                       ],
                     ),
                   ),
-                ),
+                ),  
               );
             },
           ),
