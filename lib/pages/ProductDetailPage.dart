@@ -1,11 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sugatiol/components/CommonBizLogic.dart';
+import 'package:sugatiol/components/DataUtils.dart';
 
 import '../Configuration/Global.dart';
 import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
+import '../components/NumberAdjuster.dart';
 import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
 
@@ -60,13 +61,37 @@ class _ProductDetailPageState extends PageStateTemplate {
     if (productDetailData["nutriments"] != null) {
       nutriments = productDetailData["nutriments"];
     }
+    Map nutrimentsServing = {};
+    nutriments.keys.forEach((element) {
+      if (!element.toString().contains("_unit")) {
+        String strValue = nutriments[element].toString();
+        if (strValue != "") {
+          double amount = double.parse(strValue);
+          strValue = amount.toStringAsFixed(1);
+        }
+        String strUnit = "";
+        if (nutriments[element + "_unit"] != null) {
+          strUnit = " " + nutriments[element + "_unit"];
+        }
+        String finalValue = strValue + strUnit;
+        nutrimentsServing[element] = finalValue;
+      }
+    });
     double sugarNum = 0;
     double sugarTotal = 0;
     if (nutriments["sugars_serving"] != null) {
-      sugarTotal = nutriments["sugars_serving"] * productDetailData['serving_per_pack'];
+      sugarTotal = nutriments["sugars_serving"] *
+          double.parse(productDetailData['serving_per_pack'].toString());
       sugarNum = double.parse(sugarTotal.toString());
     }
     int sugarCubs = (sugarNum / 4.5).ceil();
+
+    int qtyNumber = productDetailData["serving_qty"];
+
+    void _handleValueChanged(int newValue) {
+      qtyNumber = newValue;
+    }
+
     return Stack(
       children: [
         Positioned(
@@ -81,20 +106,23 @@ class _ProductDetailPageState extends PageStateTemplate {
                   margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   // width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 81, 136),
+                    color: const Color.fromARGB(255, 74, 73, 73),
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 10,
-                      childAspectRatio: 1,
+                      crossAxisCount: 4,
+                      childAspectRatio: 1.5,
+                      crossAxisSpacing: 10,
                     ),
                     itemCount: sugarCubs,
                     itemBuilder: (context, index) {
                       return Image(
-                        image: AssetImage("assets/deployed_code.png"),
-                        color: Colors.white,
+                        image: AssetImage("assets/spoon.jpeg"),
+                        //color: Colors.white,
+                        width: 10,
+                        height: 10,
                       );
                     },
                   ),
@@ -117,7 +145,7 @@ class _ProductDetailPageState extends PageStateTemplate {
                       ),
                       Expanded(
                         child: Text(
-                          "${productDetailData["product_name"]} contains ${sugarNum.toStringAsFixed(2)}g sugar, equals to ${(sugarNum / 4.5).toStringAsFixed(2)} sugar cubes",
+                          "${productDetailData["product_name"]} equals to ${(sugarNum / 4.5).toStringAsFixed(2)} tea spoons of sugar",
                           style: TextStyle(color: Colors.white),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
@@ -186,7 +214,7 @@ class _ProductDetailPageState extends PageStateTemplate {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Nutrition Table",
+                          "Ingridients Table",
                           style: TextStyle(color: Colors.white),
                         ),
                         Text(
@@ -245,44 +273,141 @@ class _ProductDetailPageState extends PageStateTemplate {
                       },
                     ),
                   ),
+                Container(
+                  height: 80,
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 74, 73, 73),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Serving Qty",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                        NumberAdjuster(
+                          minNumber: productDetailData["serving_qty"],
+                          maxNumber: productDetailData["serving_per_pack"],
+                          initialValue: qtyNumber,
+                          onValueChanged: _handleValueChanged,
+                        ),
+                      ],
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Serving Size",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                          Text(
+                            "250 ml",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        ])
+                  ]),
+                ),
+                if (nutrimentsServing.keys.length > 0)
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Nutrition Table",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          "Per Serving",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (nutrimentsServing.keys.length > 0)
+                  Container(
+                    height: nutrimentsServing.length * 30 + 5,
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 74, 73, 73),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      itemCount: nutrimentsServing.keys.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String strAmount = "";
+                        String strKey = nutrimentsServing.keys.elementAt(index);
+                        strAmount = nutrimentsServing[strKey].toString();
+                        return Container(
+                          margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          height: 25,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  DataUtils.capitalizeFirstLetter(strKey),
+                                  style: TextStyle(color: Colors.white),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  strAmount,
+                                  style: TextStyle(color: Colors.white),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
               ],
             ),
           ),
         ),
         Positioned(
-          bottom: 5,
+          height: 400 - 40,
+          right: 40,
+          child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Text(
+              "Total sugar ${sugarNum} g",
+              textAlign: TextAlign.right,
+              style: TextStyle(color: Colors.white),
+            )
+          ]),
+        ),
+        Positioned(
+          bottom: 20,
           child: Container(
             // color: const Color.fromARGB(255, 110, 109, 109),
             alignment: Alignment.bottomCenter,
             margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 SizedBox(
-                  width: 100,
+                  width: 120,
                   child: ElevatedButton(
                     onPressed: () {
                       try {
                         String today =
                             MyDateUtils.formatToyyyMMdd(DateTime.now());
-                        SharedPreferences.getInstance().then((prefs) {
-                          String alreadyTodaySugarIntake = "0";
-                          if (prefs.getString(
-                                  PreferencesCfg.todaySugarIntake + today) !=
-                              null) {
-                            alreadyTodaySugarIntake = prefs
-                                .getString(
-                                    PreferencesCfg.todaySugarIntake + today)
-                                .toString();
-                          }
-                          double todaySugarIntakeTotal =
-                              double.parse(alreadyTodaySugarIntake) + sugarNum;
-                          prefs.setString(
-                              PreferencesCfg.todaySugarIntake + today,
-                              todaySugarIntakeTotal.toString());
-                          TempData.todaySugarIntakeTotal.value =
-                              todaySugarIntakeTotal;
-                        });
+                        CommonBizLogic.addSugarIntake(
+                            productDetailData["code"], qtyNumber);
                         Navigator.pop(context);
                       } catch (e) {
                         Log.instance.e(e);
@@ -291,17 +416,18 @@ class _ProductDetailPageState extends PageStateTemplate {
                             position: ToastPostion.bottom);
                       }
                     },
-                    child: Text('Add', style: TextStyle(color: Colors.white)),
+                    child:
+                        Text('Confirm', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.blue,
                     ),
                   ),
                 ),
                 SizedBox(
-                  width: 100,
+                  width: 80,
                 ),
                 SizedBox(
-                  width: 100,
+                  width: 120,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
