@@ -1,11 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../Business/ListSugarIntakesToday.dart';
+import '../Business/RemoveSugarIntake.dart';
+import '../Configuration/APIList.dart';
 import '../Configuration/Global.dart';
-import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
+import '../components/MyHttpRequest.dart';
 import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
+import 'ErrorPage.dart';
+import 'ProductDetailPage.dart';
 
 class TodayIntakePage extends StatefulWidget {
   TodayIntakePage({Key? key}) : super(key: key);
@@ -13,19 +19,50 @@ class TodayIntakePage extends StatefulWidget {
 }
 
 class _TodayIntakePageState extends PageStateTemplate {
-  void loadTodaySugar() {
+  List<dynamic> intakeListToday = [];
+
+  Future<void> listSugarIntakesToday() async {
     try {
-      String today = MyDateUtils.formatToyyyMMdd(DateTime.now());
-      SharedPreferences.getInstance().then((prefs) {
-        String alreadyTodaySugarIntake = "0";
-        if (prefs.getString(PreferencesCfg.todaySugarIntake + today) != null) {
-          alreadyTodaySugarIntake = prefs
-              .getString(PreferencesCfg.todaySugarIntake + today)
-              .toString();
-        }
-        TempData.todaySugarIntakeTotal.value =
-            double.parse(alreadyTodaySugarIntake);
-      });
+      String api = APIList.lightSugarAPI["listSugarIntakesToday"];
+      ListSugarIntakesToday listSugarIntakesToday = ListSugarIntakesToday();
+      Response response = await MyHttpRequest.instance
+          .sendRequest(api, {}, listSugarIntakesToday);
+      if (response.data["ack"] == "success") {
+        setState(() {
+          intakeListToday = response.data['list'];
+        });
+      } else if (response.data["ack"] == "failure") {
+        Toast.toast(context,
+            msg: "Fail to get Intake List.", position: ToastPostion.bottom);
+      }
+    } catch (e) {
+      Log.instance.e(e);
+    }
+  }
+
+  Future<void> removeSugarIntake(String recordId) async {
+    Map<String, dynamic> parameters = {
+      "username": "jnz121",
+      "record_id": recordId
+    };
+
+    try {
+      String api = APIList.lightSugarAPI["removeSugarIntake"];
+      RemoveSugarIntake removeSugarIntake = RemoveSugarIntake(parameters);
+      Response response = await MyHttpRequest.instance
+          .sendRequest(api, parameters, removeSugarIntake);
+
+      if (response.data["ack"] == "success") {
+        await listSugarIntakesToday();
+        setState(() {});
+      } else if (response.data["ack"] == "failure") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ErrorPage(errorMessage: response.data["message"])),
+        );
+      }
     } catch (e) {
       Log.instance.e(e);
     }
@@ -37,7 +74,7 @@ class _TodayIntakePageState extends PageStateTemplate {
       automaticallyImplyLeading: false,
       title: Text(
         "Today's Intake",
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
       backgroundColor: Colors.black,
       centerTitle: true,
@@ -55,21 +92,115 @@ class _TodayIntakePageState extends PageStateTemplate {
   Widget buildPageBody() {
     double contentHeight = MediaQuery.of(context).size.height - 220 - 200;
     if (contentHeight < 60) contentHeight = 60;
+
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              "Content",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.white, fontSize: 36),
-            )
-          ],
+      children: <Widget>[
+        Divider(color: Color.fromRGBO(43, 43, 43, 1), thickness: 2),
+        SizedBox(height: 10),
+        Expanded(
+          child: ListView.separated(
+            itemCount: intakeListToday.length,
+            separatorBuilder: (context, index) => SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              var item = intakeListToday[index];
+              return Slidable(
+                key: ValueKey(item['_id']),
+                endActionPane: ActionPane(
+                  motion: const DrawerMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (BuildContext context) {
+                        removeSugarIntake(item['_id']);
+                        double sugarDelete = item['food']['nutriments']
+                                ['sugars_serving'] *
+                            item['serving_count'];
+                        TempData.todaySugarIntakeTotal.value =
+                            TempData.todaySugarIntakeTotal.value - sugarDelete;
+                      },
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete,
+                      label: 'Delete',
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ],
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductDetailPage(
+                          productDetailData: item['food'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(58, 58, 58, 1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                          ),
+                          child: Image.network(
+                            item['food']['img_url'],
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  item['food']['product_name'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Serving Qty: ${item['serving_count']}',
+                                      style: TextStyle(
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                      size: 16.0,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
@@ -77,40 +208,7 @@ class _TodayIntakePageState extends PageStateTemplate {
 
   @override
   void specificInit() {
-    loadTodaySugar();
-  }
-}
-
-class CircleWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<double>(
-        valueListenable: TempData.todaySugarIntakeTotal,
-        builder: (c, ac, _) {
-          String showNum = "0";
-          if (ac > 999) {
-            showNum = "999+";
-          } else {
-            showNum = ac.round().toString();
-          }
-          return Container(
-            width: 60.0,
-            height: 60.0,
-            decoration: BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '${showNum} g',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          );
-        });
+    listSugarIntakesToday();
   }
 }
 

@@ -22,6 +22,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends PageStateTemplate {
   List<dynamic> intakeListLastWeek = [];
+  
 
   Future<void> getIntakeListLastWeek() async {
     try {
@@ -81,77 +82,71 @@ class _HistoryPageState extends PageStateTemplate {
             separatorBuilder: (context, index) => SizedBox(height: 10),
             itemBuilder: (context, index) {
               var record = intakeListLastWeek[index]['food'];
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(58, 58, 58, 1),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    // ... shadow decoration ...
-                  ],
-                ),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(
-                        flex:
-                            2, // You can adjust this flex factor as needed for image to text ratio
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(10)),
-                          child: Image.network(
-                            record['img_url'],
-                            fit: BoxFit.cover,
+              return InkWell(  
+                onTap: () { 
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailPage(
+                          productDetailData: record),
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(58, 58, 58, 1),
+                    borderRadius: BorderRadius.circular(10), 
+                    boxShadow: [
+                    ],
+                  ),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(10)),
+                            child: Image.network(
+                              record['img_url'],
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 12), // Add space between image and text
-                      Expanded(
-                        flex:
-                            5, // Adjust the flex factor as needed for the ratio of the text section
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                record['product_name'],
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProductDetailPage(
-                                            productDetailData: record),
-                                      ),
-                                    );
-                                  },
-                                  child: Text('Details',
-                                      style: TextStyle(color: Colors.white)),
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18.0),
-                                    ),
+                        SizedBox(width: 12), // Add space between image and text
+                        Expanded(
+                          flex: 5,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  record['product_name'],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
                                 ),
-                              ),
-                            ],
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(  
+                                    Icons.arrow_forward_ios,  
+                                    color: Colors.white,
+                                    size: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -165,39 +160,6 @@ class _HistoryPageState extends PageStateTemplate {
   @override
   void specificInit() {
     getIntakeListLastWeek();
-  }
-}
-
-class CircleWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<double>(
-        valueListenable: TempData.todaySugarIntakeTotal,
-        builder: (c, ac, _) {
-          String showNum = "0";
-          if (ac > 999) {
-            showNum = "999+";
-          } else {
-            showNum = ac.round().toString();
-          }
-          return Container(
-            width: 60.0,
-            height: 60.0,
-            decoration: BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '${showNum} g',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          );
-        });
   }
 }
 
