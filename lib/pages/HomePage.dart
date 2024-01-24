@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugatiol/components/CommonBizLogic.dart';
 import '../Business/AddSugarIntake.dart';
 import '../Business/GetIntakePrediction.dart';
@@ -104,40 +103,6 @@ class _HomePageState extends PageStateTemplate {
       Log.instance.e(e);
     }
   }
-
-  // Future<void> addSugarIntake(String code, int servingCount) async {
-  //   Map<String, dynamic> parameters = {
-  //     "username": "jnz121",
-  //     "date": DateTime.now().toIso8601String(),
-  //     "code": code,
-  //     "serving_count": servingCount
-  //   };
-
-  //   try {
-  //     String api = APIList.lightSugarAPI["addSugarIntake"];
-  //     AddSugarIntake addSugarIntake = AddSugarIntake(parameters);
-  //     Response response = await MyHttpRequest.instance
-  //         .sendRequest(api, parameters, addSugarIntake);
-
-  //     if (response.data["ack"] == "success") {
-  //       await getSugarIntakeToday();
-  //       setState(() {});
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => OneClickConfirmPage()),
-  //       );
-  //     } else if (response.data["ack"] == "failure") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) =>
-  //                 ErrorPage(errorMessage: response.data["message"])),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     Log.instance.e(e);
-  //   }
-  // }
 
   @override
   AppBar buildAppBar() {
@@ -270,6 +235,7 @@ class _HomePageState extends PageStateTemplate {
         // Use Flexible to make the ListView scrollable within the column
         Flexible(
           child: ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 10),
             itemCount: predictionFood.length,
             itemBuilder: (context, index) {
               var item = predictionFood[index]['food'];
@@ -299,11 +265,12 @@ class _HomePageState extends PageStateTemplate {
                   trailing: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white, // Add button to increment the serving
-                    onPressed: () {
+                    onPressed: () async {
                       try {
-                        CommonBizLogic.addSugarIntake(
+                        await CommonBizLogic.addSugarIntake(
                             predictionFood[index]['food']['code'],
                             predictionFood[index]['mostFrequentServingCount']);
+                        await CommonBizLogic.getIntakeListToday();
                         setState(() {});
                         Navigator.push(
                             context,

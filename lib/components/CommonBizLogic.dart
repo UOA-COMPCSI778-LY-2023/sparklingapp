@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:sugatiol/components/LogUtils.dart';
 
 import '../Business/AddSugarIntake.dart';
 import '../Business/GetSugarIntakeToday.dart';
+import '../Business/ListSugarIntakesToday.dart';
 import '../Configuration/APIList.dart';
 import '../Configuration/Global.dart';
 import 'MyHttpRequest.dart';
@@ -47,5 +49,32 @@ class CommonBizLogic {
     } catch (e) {
       throw e;
     }
+  }
+
+
+static Future<List<dynamic>> listSugarIntakesToday() async {
+    try {
+      String api = APIList.lightSugarAPI["listSugarIntakesToday"];
+      ListSugarIntakesToday listSugarIntakesToday = ListSugarIntakesToday();
+      Response response = await MyHttpRequest.instance
+          .sendRequest(api, {}, listSugarIntakesToday);
+      if (response.data["ack"] == "success") {
+          return Future.value(response.data['list']);
+      } else if (response.data["ack"] == "failure") {
+        return Future.error(response.data["message"]);
+      }else{
+        Log.instance.e("Unknown Error");
+        return Future.error("Unknown Error");
+      }
+    } catch (e) {
+      return Future.error(e);
+    }
+    
+  }
+
+  static getIntakeListToday() async {
+    Future<List<dynamic>> tempIntakeListToday;
+    tempIntakeListToday = CommonBizLogic.listSugarIntakesToday();
+    TempData.intakeListToday.value = await tempIntakeListToday;
   }
 }

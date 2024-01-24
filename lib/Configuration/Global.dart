@@ -11,6 +11,7 @@ class NetworkCfg {
 class TempData {
   static ValueNotifier<double> todaySugarIntakeTotal = ValueNotifier(0);
   static ValueNotifier<double> average7DaysSugar = ValueNotifier(0);
+  static ValueNotifier<List<dynamic>> intakeListToday = ValueNotifier([]);
 }
 
 class PreferencesCfg {
