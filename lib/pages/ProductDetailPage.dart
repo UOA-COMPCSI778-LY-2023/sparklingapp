@@ -9,6 +9,7 @@ import '../components/LogUtils.dart';
 import '../components/NumberAdjuster.dart';
 import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
+import 'OneClickConfirmPage.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Map productDetailData;
@@ -409,6 +410,11 @@ class _ProductDetailPageState extends PageStateTemplate {
                         CommonBizLogic.addSugarIntake(
                             productDetailData["code"], qtyNumber);
                         Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OneClickConfirmPage(
+                                    msg: "Sugar Intake added!")));
                       } catch (e) {
                         Log.instance.e(e);
                         Toast.toast(context,
