@@ -18,26 +18,6 @@ class TodayIntakePage extends StatefulWidget {
 }
 
 class _TodayIntakePageState extends PageStateTemplate {
-  
-
-  // Future<void> listSugarIntakesToday() async {
-  //   try {
-  //     String api = APIList.lightSugarAPI["listSugarIntakesToday"];
-  //     ListSugarIntakesToday listSugarIntakesToday = ListSugarIntakesToday();
-  //     Response response = await MyHttpRequest.instance
-  //         .sendRequest(api, {}, listSugarIntakesToday);
-  //     if (response.data["ack"] == "success") {
-  //       setState(() {
-  //         intakeListToday = response.data['list'];
-  //       });
-  //     } else if (response.data["ack"] == "failure") {
-  //       Toast.toast(context,
-  //           msg: "Fail to get Intake List.", position: ToastPostion.bottom);
-  //     }
-  //   } catch (e) {
-  //     Log.instance.e(e);
-  //   }
-  // }
 
   Future<void> removeSugarIntake(String recordId) async {
     Map<String, dynamic> parameters = {

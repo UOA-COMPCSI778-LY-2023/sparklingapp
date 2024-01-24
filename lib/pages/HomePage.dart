@@ -104,40 +104,6 @@ class _HomePageState extends PageStateTemplate {
     }
   }
 
-  // Future<void> addSugarIntake(String code, int servingCount) async {
-  //   Map<String, dynamic> parameters = {
-  //     "username": "jnz121",
-  //     "date": DateTime.now().toIso8601String(),
-  //     "code": code,
-  //     "serving_count": servingCount
-  //   };
-
-  //   try {
-  //     String api = APIList.lightSugarAPI["addSugarIntake"];
-  //     AddSugarIntake addSugarIntake = AddSugarIntake(parameters);
-  //     Response response = await MyHttpRequest.instance
-  //         .sendRequest(api, parameters, addSugarIntake);
-
-  //     if (response.data["ack"] == "success") {
-  //       await getSugarIntakeToday();
-  //       setState(() {});
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => OneClickConfirmPage()),
-  //       );
-  //     } else if (response.data["ack"] == "failure") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) =>
-  //                 ErrorPage(errorMessage: response.data["message"])),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     Log.instance.e(e);
-  //   }
-  // }
-
   @override
   AppBar buildAppBar() {
     return AppBar(
@@ -269,6 +235,7 @@ class _HomePageState extends PageStateTemplate {
         // Use Flexible to make the ListView scrollable within the column
         Flexible(
           child: ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 10),
             itemCount: predictionFood.length,
             itemBuilder: (context, index) {
               var item = predictionFood[index]['food'];
