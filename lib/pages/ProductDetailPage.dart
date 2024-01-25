@@ -88,8 +88,8 @@ class _ProductDetailPageState extends PageStateTemplate {
     int sugarCubs = (sugarNum / 4.5).ceil();
 
     int qtyNumber = productDetailData["serving_qty"];
-    double qtyPer = double.parse(
-        productDetailData["nutriments"]["sugars_serving"].toString());
+    double qtyPer =
+        double.parse(productDetailData["nutriments"]["Sugars"].toString());
 
     ValueNotifier<double> qtyValue = ValueNotifier(qtyPer);
 
