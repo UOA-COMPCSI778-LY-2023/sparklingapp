@@ -134,6 +134,19 @@ class _ProductDetailPageState extends PageStateTemplate {
                   ),
                 ),
                 Container(
+                  //height: 400 - 40,
+                  //right: 40,
+                  margin: const EdgeInsets.fromLTRB(20, 0, 40, 0),
+                  child:
+                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Text(
+                      "Total sugar ${sugarNum} g",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: Colors.white),
+                    )
+                  ]),
+                ),
+                Container(
                   padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
                   margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                   decoration: BoxDecoration(
@@ -392,17 +405,6 @@ class _ProductDetailPageState extends PageStateTemplate {
               ],
             ),
           ),
-        ),
-        Positioned(
-          height: 400 - 40,
-          right: 40,
-          child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Text(
-              "Total sugar ${sugarNum} g",
-              textAlign: TextAlign.right,
-              style: TextStyle(color: Colors.white),
-            )
-          ]),
         ),
         Positioned(
           bottom: 20,
