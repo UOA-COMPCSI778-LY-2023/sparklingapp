@@ -20,6 +20,6 @@ class APIList {
   };
   static Map geminiPrompt = {
     "identifyFood":
-        "请识别照相机里有哪些食物并给出健康建议。你的回答应该为一段话。你的一段话中，需要包括以下内容：1. 食物的类别；2. 食物的健康评分；3. 一般情况下该类食物每100g糖分含量；4. 食物的健康建议；6.你的健康建议应该围绕糖； ",
+        "Identify what foods are in the camera and give health advice. Your answer should be a paragraph. Your paragraph needs to include the following: 1. the food group; 2. the health score of the food; 3. the amount of sugar per 100g of that food group in general; 4. the health advice for the food; and 6. your health advice should be centred around sugar;",
   };
 }
