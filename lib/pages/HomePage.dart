@@ -24,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends PageStateTemplate {
   double targetSugarNum = 100;
   List<dynamic> predictionFood = [];
+  bool _showFrequent = true;
 
   @override
   void specificInit() {}
@@ -85,18 +86,22 @@ class _HomePageState extends PageStateTemplate {
 
   Future<void> getIntakePrediction() async {
     try {
-      String api = APIList.lightSugarAPI["getIntakePrediction"];
-      GetIntakePrediction getIntakePrediction = GetIntakePrediction();
-      Response response = await MyHttpRequest.instance
-          .sendRequest(api, {}, getIntakePrediction);
+      if (_showFrequent) {
+        String api = APIList.lightSugarAPI["getIntakePrediction"];
+        GetIntakePrediction getIntakePrediction = GetIntakePrediction();
+        Response response = await MyHttpRequest.instance
+            .sendRequest(api, {}, getIntakePrediction);
 
-      if (response.data["ack"] == "success") {
-        setState(() {
-          predictionFood = response.data['predictions'];
-        });
-      } else if (response.data["ack"] == "failure" &&
-          response.data["message"] ==
-              "No food data available for this time interval.") {
+        if (response.data["ack"] == "success") {
+          setState(() {
+            predictionFood = response.data['predictions'];
+          });
+        } else if (response.data["ack"] == "failure" &&
+            response.data["message"] ==
+                "No food data available for this time interval.") {
+          predictionFood = [];
+        }
+      } else {
         predictionFood = [];
       }
     } catch (e) {
@@ -219,23 +224,11 @@ class _HomePageState extends PageStateTemplate {
                 })
           ],
         ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Frequent Intake",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-
+        _buildTabBar(),
         // Use Flexible to make the ListView scrollable within the column
         Flexible(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             itemCount: predictionFood.length,
             itemBuilder: (context, index) {
               var item = predictionFood[index]['food'];
@@ -293,6 +286,69 @@ class _HomePageState extends PageStateTemplate {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _showFrequent = true;
+                  getIntakePrediction();
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: _showFrequent ? Colors.blue : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Frequent Intake',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _showFrequent = false;
+                  getIntakePrediction();
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: !_showFrequent ? Colors.blue : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Recommended',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

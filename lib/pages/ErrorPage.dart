@@ -19,7 +19,6 @@ class _ErrorPage extends PageStateTemplate {
 
   @override
   void specificInit() {
-    // 在这里初始化任何需要的数据
   }
 
   @override
@@ -38,14 +37,14 @@ class _ErrorPage extends PageStateTemplate {
   Widget buildPageBody() {
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.8, // 屏幕宽度的 80%
+        width: MediaQuery.of(context).size.width * 0.8,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 74, 73, 73),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // 内容适配
+          mainAxisSize: MainAxisSize.min,
           children: [
             CircleAvatar(
               backgroundColor: Colors.red,
@@ -54,7 +53,7 @@ class _ErrorPage extends PageStateTemplate {
             ),
             SizedBox(height: 20),
             Text(
-              this.eMessage, // 显示传入的错误信息
+              this.eMessage, 
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 24, color: Colors.white),
             ),

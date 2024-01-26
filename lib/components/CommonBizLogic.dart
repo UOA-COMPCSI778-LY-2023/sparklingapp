@@ -30,7 +30,7 @@ class CommonBizLogic {
   static Future<void> addSugarIntake(String code, int servingCount) async {
     Map<String, dynamic> parameters = {
       "username": "jnz121",
-      "date": DateTime.now().toIso8601String(),
+      "date": "",
       "code": code,
       "serving_count": servingCount
     };

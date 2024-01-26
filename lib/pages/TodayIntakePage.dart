@@ -93,7 +93,7 @@ class _TodayIntakePageState extends PageStateTemplate {
                             onPressed: (BuildContext context) {
                               removeSugarIntake(item['_id']);
                               double sugarsServing = (item['food']['nutriments']
-                                      ['sugars_serving'] as num)
+                                      ['Sugars'] as num)
                                   .toDouble();
                               double sugarDelete =
                                   sugarsServing * item['serving_count'];
