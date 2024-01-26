@@ -54,6 +54,9 @@ class _ProductDetailPageState extends PageStateTemplate {
     if (productDetailData["img_url"] != null) {
       imgUrl = productDetailData["img_url"];
     }
+    if (productDetailData["image_front_url"] != null) {
+      imgUrl = productDetailData["image_front_url"];
+    }
     List ingridientsList = [];
     if (productDetailData["ingredients"] != null) {
       ingridientsList = productDetailData["ingredients"];
@@ -80,14 +83,19 @@ class _ProductDetailPageState extends PageStateTemplate {
     });
     double sugarNum = 0;
     double sugarTotal = 0;
-    if (nutriments["sugars_serving"] != null) {
-      sugarTotal = nutriments["sugars_serving"] *
+    if (nutriments["Sugars"] != null) {
+      sugarTotal = nutriments["Sugars"] *
           double.parse(productDetailData['serving_per_pack'].toString());
+      sugarNum = double.parse(sugarTotal.toString());
+    }
+    if (nutriments["sugars"] != null) {
+      sugarTotal = nutriments["sugars"] * 1.0;
+      //double.parse(productDetailData['rev'].toString());
       sugarNum = double.parse(sugarTotal.toString());
     }
     int sugarCubs = (sugarNum / 4.5).ceil();
 
-    int qtyNumber = productDetailData["serving_qty"] ?? 0;
+    int qtyNumber = productDetailData["serving_qty"] ?? 1;
     double qtyPer = double.parse((productDetailData["nutriments"]["Sugars"] ??
             productDetailData["nutriments"]["sugars"])
         .toString());
@@ -310,8 +318,8 @@ class _ProductDetailPageState extends PageStateTemplate {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         NumberAdjuster(
-                          minNumber: productDetailData["serving_qty"] ?? 0,
-                          maxNumber: productDetailData["serving_per_pack"] ?? 0,
+                          minNumber: productDetailData["serving_qty"] ?? 1,
+                          maxNumber: productDetailData["serving_per_pack"] ?? 1,
                           initialValue: qtyNumber,
                           onValueChanged: _handleValueChanged,
                         ),
@@ -330,8 +338,8 @@ class _ProductDetailPageState extends PageStateTemplate {
                                 return Text(
                                   ac.toString() +
                                       " " +
-                                      productDetailData["serving_unit"]
-                                          .toString(),
+                                      (productDetailData["serving_unit"] ??
+                                          "g"),
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),
                                 );

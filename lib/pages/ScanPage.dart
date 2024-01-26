@@ -145,6 +145,7 @@ class _ScanPageState extends PageStateTemplate {
   @override
   AppBar buildAppBar() {
     return AppBar(
+      title: Text("Scan Barcode"),
       iconTheme: IconThemeData(color: Colors.white),
       backgroundColor: Colors.black,
       centerTitle: false,
@@ -213,6 +214,9 @@ class _ScanPageState extends PageStateTemplate {
               }
               if (productData["brands"] != null) {
                 productBrand = productData["brands"];
+              }
+              if (productData["img_url"] != null) {
+                productImageUrl = productData["img_url"];
               }
               if (productData["image_front_url"] != null) {
                 productImageUrl = productData["image_front_url"];
