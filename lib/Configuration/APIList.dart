@@ -1,5 +1,5 @@
 class APIList {
-  static const String _ip = "127.0.0.1";
+  static const String _ip = "172.23.46.128";
   static const String _port = "3000";
   static Map openFoodAPI = {
     "getFoodByBarcode": "https://world.openfoodfacts.org/api/v3/product/{0}",
@@ -16,5 +16,6 @@ class APIList {
     "listSugarIntakesToday":
         "http://$_ip:$_port/users/jnz121/intakes-list-today",
     "removeSugarIntake": "http://$_ip:$_port/users/sugar-intake/remove",
+    "getFoodByBarcode": "http://$_ip:$_port/packaged-food/{0}",
   };
 }

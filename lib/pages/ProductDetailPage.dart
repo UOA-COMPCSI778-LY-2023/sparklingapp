@@ -87,9 +87,10 @@ class _ProductDetailPageState extends PageStateTemplate {
     }
     int sugarCubs = (sugarNum / 4.5).ceil();
 
-    int qtyNumber = productDetailData["serving_qty"];
-    double qtyPer =
-        double.parse(productDetailData["nutriments"]["Sugars"].toString());
+    int qtyNumber = productDetailData["serving_qty"] ?? 0;
+    double qtyPer = double.parse((productDetailData["nutriments"]["Sugars"] ??
+            productDetailData["nutriments"]["sugars"])
+        .toString());
 
     ValueNotifier<double> qtyValue = ValueNotifier(qtyPer);
 
@@ -309,8 +310,8 @@ class _ProductDetailPageState extends PageStateTemplate {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         NumberAdjuster(
-                          minNumber: productDetailData["serving_qty"],
-                          maxNumber: productDetailData["serving_per_pack"],
+                          minNumber: productDetailData["serving_qty"] ?? 0,
+                          maxNumber: productDetailData["serving_per_pack"] ?? 0,
                           initialValue: qtyNumber,
                           onValueChanged: _handleValueChanged,
                         ),

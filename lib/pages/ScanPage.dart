@@ -32,17 +32,40 @@ class _ScanPageState extends PageStateTemplate {
   Future<void> addProduct(String barcode) async {
     try {
       if (products[barcode] == null) {
-        String api = APIList.openFoodAPI["getFoodByBarcode"];
+        String api = APIList.lightSugarAPI["getFoodByBarcode"];
+        // barcode = "9300675090414";
         String url = api.replaceAll('{0}', barcode);
-        // 使用 ConcreteHandlerA 发送请求
         GetProductInfoFromOpenFood getProductInfoFromOpenFood =
             GetProductInfoFromOpenFood();
         Response response = await MyHttpRequest.instance
             .sendRequest(url, {}, getProductInfoFromOpenFood);
-        Map productData = response.data;
-        if (products[barcode] == null) {
-          products[barcode] = productData;
-          setState(() {});
+
+        if (response.data["ack"] == "success") {
+          Map productData = response.data["data"];
+          products =
+              {}; //always clear all the product data, only show one product
+          if (products[barcode] == null) {
+            products[barcode] = productData;
+            setState(() {});
+          }
+        } else if (response.data["ack"] == "failure") {
+          Toast.toast(context,
+              msg:
+                  "Product not found in own database, trying searching from openfoodstuff",
+              position: ToastPostion.bottom);
+          String api = APIList.openFoodAPI["getFoodByBarcode"];
+          String url = api.replaceAll('{0}', barcode);
+          GetProductInfoFromOpenFood getProductInfoFromOpenFood =
+              GetProductInfoFromOpenFood();
+          Response response = await MyHttpRequest.instance
+              .sendRequest(url, {}, getProductInfoFromOpenFood);
+          Map productData = response.data["product"];
+          products =
+              {}; //always clear all the product data, only show one product
+          if (products[barcode] == null) {
+            products[barcode] = productData;
+            setState(() {});
+          }
         }
       }
     } catch (e) {
@@ -50,6 +73,29 @@ class _ScanPageState extends PageStateTemplate {
           msg: "${e.toString()}", position: ToastPostion.bottom);
     }
   }
+
+  // Future<void> addProduct2(String barcode) async {
+  //   try {
+  //     if (products[barcode] == null) {
+  //       String api = APIList.openFoodAPI["getFoodByBarcode"];
+  //       String url = api.replaceAll('{0}', barcode);
+  //       GetProductInfoFromOpenFood getProductInfoFromOpenFood =
+  //           GetProductInfoFromOpenFood();
+  //       Response response = await MyHttpRequest.instance
+  //           .sendRequest(url, {}, getProductInfoFromOpenFood);
+  //       Map productData = response.data;
+  //       products =
+  //           {}; //always clear all the product data, only show one product
+  //       if (products[barcode] == null) {
+  //         products[barcode] = productData;
+  //         setState(() {});
+  //       }
+  //     }
+  //   } catch (e) {
+  //     Toast.toast(context,
+  //         msg: "${e.toString()}", position: ToastPostion.bottom);
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -158,8 +204,7 @@ class _ScanPageState extends PageStateTemplate {
           child: ListView.builder(
             itemCount: products.keys.length,
             itemBuilder: (BuildContext context, int index) {
-              Map productData =
-                  products[products.keys.toList()[index]]["product"];
+              Map productData = products[products.keys.toList()[index]];
               String productName = "";
               String productBrand = "";
               String productImageUrl = "";
