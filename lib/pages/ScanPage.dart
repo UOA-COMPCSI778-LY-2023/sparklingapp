@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:sugatiol/Configuration/Global.dart';
 
 import '../Business/GetProductInfoFromOpenFood.dart';
 import '../Configuration/APIList.dart';
+import '../components/LogUtils.dart';
 import '../components/MyHttpRequest.dart';
 import '../components/Router.dart';
 import '../components/Toast.dart';
@@ -28,21 +32,46 @@ class _ScanPageState extends PageStateTemplate {
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
   Map products = {}; //products[barcode] = productData
+  bool isAIBusy = false;
+  static ValueNotifier<String> aiAnswer = ValueNotifier("");
 
   Future<void> addProduct(String barcode) async {
     try {
       if (products[barcode] == null) {
-        String api = APIList.openFoodAPI["getFoodByBarcode"];
+        String api = APIList.lightSugarAPI["getFoodByBarcode"];
+        // barcode = "9300675090414";
         String url = api.replaceAll('{0}', barcode);
-        // 使用 ConcreteHandlerA 发送请求
         GetProductInfoFromOpenFood getProductInfoFromOpenFood =
             GetProductInfoFromOpenFood();
         Response response = await MyHttpRequest.instance
             .sendRequest(url, {}, getProductInfoFromOpenFood);
-        Map productData = response.data;
-        if (products[barcode] == null) {
-          products[barcode] = productData;
-          setState(() {});
+
+        if (response.data["ack"] == "success") {
+          Map productData = response.data["data"];
+          products =
+              {}; //always clear all the product data, only show one product
+          if (products[barcode] == null) {
+            products[barcode] = productData;
+            setState(() {});
+          }
+        } else if (response.data["ack"] == "failure") {
+          Toast.toast(context,
+              msg:
+                  "Product not found in database, try to search from openfoodstuff",
+              position: ToastPostion.bottom);
+          String api = APIList.openFoodAPI["getFoodByBarcode"];
+          String url = api.replaceAll('{0}', barcode);
+          GetProductInfoFromOpenFood getProductInfoFromOpenFood =
+              GetProductInfoFromOpenFood();
+          Response response = await MyHttpRequest.instance
+              .sendRequest(url, {}, getProductInfoFromOpenFood);
+          Map productData = response.data["product"];
+          products =
+              {}; //always clear all the product data, only show one product
+          if (products[barcode] == null) {
+            products[barcode] = productData;
+            setState(() {});
+          }
         }
       }
     } catch (e) {
@@ -58,6 +87,21 @@ class _ScanPageState extends PageStateTemplate {
     super.dispose();
   }
 
+  void getResponseFromAI(InputImage inputImage) async {
+    // final file = File('assets/img.png');
+    isAIBusy = true;
+    final gemini = Gemini.instance;
+    await gemini
+        .textAndImage(
+            text: APIList.geminiPrompt["identifyFood"],
+            images: [File(inputImage.filePath!).readAsBytesSync()])
+        .then((value) =>
+            aiAnswer.value = (value?.content?.parts?.last.text ?? ''))
+        .then((value) => {isAIBusy = false})
+        .catchError((e) => Log.instance.e(e));
+    setState(() {});
+  }
+
   Future<void> _processImage(InputImage inputImage) async {
     if (!_canProcess) return;
     if (_isBusy) return;
@@ -71,6 +115,8 @@ class _ScanPageState extends PageStateTemplate {
       String bcodeText = bcode.rawValue!;
       addProduct(bcodeText);
     });
+
+    getResponseFromAI(inputImage);
 
     if (inputImage.metadata?.size != null &&
         inputImage.metadata?.rotation != null) {
@@ -99,6 +145,7 @@ class _ScanPageState extends PageStateTemplate {
   @override
   AppBar buildAppBar() {
     return AppBar(
+      title: Text("Scan Barcode"),
       iconTheme: IconThemeData(color: Colors.white),
       backgroundColor: Colors.black,
       centerTitle: false,
@@ -117,7 +164,7 @@ class _ScanPageState extends PageStateTemplate {
         Column(
           children: [
             Container(
-              height: 200,
+              height: 400,
               width: size.width - 20,
               margin: const EdgeInsets.fromLTRB(10, 5, 10, 20),
               // width: double.infinity,
@@ -141,25 +188,24 @@ class _ScanPageState extends PageStateTemplate {
             // Text(barcode),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              "Scan History: ${products.keys.length}",
-              style: TextStyle(color: Colors.white),
-            )
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.start,
+        //   children: [
+        //     SizedBox(
+        //       width: 20,
+        //     ),
+        //     Text(
+        //       "Scan History: ${products.keys.length}",
+        //       style: TextStyle(color: Colors.white),
+        //     )
+        //   ],
+        // ),
         Expanded(
           flex: 1,
           child: ListView.builder(
             itemCount: products.keys.length,
             itemBuilder: (BuildContext context, int index) {
-              Map productData =
-                  products[products.keys.toList()[index]]["product"];
+              Map productData = products[products.keys.toList()[index]];
               String productName = "";
               String productBrand = "";
               String productImageUrl = "";
@@ -169,11 +215,14 @@ class _ScanPageState extends PageStateTemplate {
               if (productData["brands"] != null) {
                 productBrand = productData["brands"];
               }
+              if (productData["img_url"] != null) {
+                productImageUrl = productData["img_url"];
+              }
               if (productData["image_front_url"] != null) {
                 productImageUrl = productData["image_front_url"];
               }
               return Container(
-                  margin: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   decoration: BoxDecoration(
                     border: Border.all(
                         color:
@@ -218,12 +267,36 @@ class _ScanPageState extends PageStateTemplate {
             },
           ),
         ),
+        ValueListenableBuilder<String>(
+            valueListenable: aiAnswer,
+            builder: (c, ac, _) {
+              return ac.isNotEmpty
+                  ? Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        // decoration: BoxDecoration(
+                        //   border: Border.all(color: Colors.grey),
+                        //   borderRadius: BorderRadius.circular(10),
+                        // ),
+                        child: ListTile(
+                          title: Text(
+                            "Tips: " + ac,
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 10,
+                          ),
+                        ),
+                      ))
+                  : Text("");
+            }),
       ],
     );
   }
 
   @override
   void specificInit() {
-    // TODO: implement specificInit
+    Gemini.init(apiKey: 'AIzaSyDuln2ikwt50BUdzKhQ5iahntcdXcwBzCw');
   }
 }
