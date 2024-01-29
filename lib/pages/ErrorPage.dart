@@ -60,11 +60,7 @@ class _ErrorPage extends PageStateTemplate {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NavigatePage()),
-                );
+                Navigator.pop(context);
               },
               child:
                   Text('Back to home', style: TextStyle(
