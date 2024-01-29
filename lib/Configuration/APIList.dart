@@ -16,6 +16,7 @@ class APIList {
     "listSugarIntakesToday":
         "http://$_ip:$_port/users/jnz121/intakes-list-today",
     "removeSugarIntake": "http://$_ip:$_port/users/sugar-intake/remove",
+    "getPredictionbymodel": "http://$_ip:$_port/users/jnz121/intake-model-prediction",
     "getFoodByBarcode": "http://$_ip:$_port/packaged-food/{0}",
   };
   static Map geminiPrompt = {

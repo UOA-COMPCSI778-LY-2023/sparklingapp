@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sugatiol/components/CommonBizLogic.dart';
 import '../Business/AddSugarIntake.dart';
 import '../Business/GetIntakePrediction.dart';
+import '../Business/GetPredictionbymodel.dart';
 import '../Business/GetSugarIntakeToday.dart';
 import '../Business/GetSugarTarget.dart';
 import '../Configuration/APIList.dart';
@@ -91,7 +92,6 @@ class _HomePageState extends PageStateTemplate {
         GetIntakePrediction getIntakePrediction = GetIntakePrediction();
         Response response = await MyHttpRequest.instance
             .sendRequest(api, {}, getIntakePrediction);
-
         if (response.data["ack"] == "success") {
           setState(() {
             predictionFood = response.data['predictions'];
@@ -102,7 +102,18 @@ class _HomePageState extends PageStateTemplate {
           predictionFood = [];
         }
       } else {
-        predictionFood = [];
+        String api = APIList.lightSugarAPI["getPredictionbymodel"];
+        GetPredictionByModel getPredictionByModel = GetPredictionByModel();
+        Response response = await MyHttpRequest.instance
+            .sendRequest(api, {}, getPredictionByModel);
+        if (response.data["ack"] == "success") {
+          setState(() {
+            predictionFood = response.data['predictions'];
+          });
+        } else if (response.data["ack"] == "failure"  
+                "No food data available for this time interval.") {
+          predictionFood = [];
+        }
       }
     } catch (e) {
       Log.instance.e(e);
