@@ -4,9 +4,9 @@ import 'package:sugatiol/components/DataUtils.dart';
 void main() {
   group('DataUtils', () {
     test('DataUtils.getIpFromUrl: Correctly get ip from url', () {
-      var date = "https://world.openfoodfacts.org/api/v3/product";
+      var data = "https://world.openfoodfacts.org/api/v3/product";
       var expectedFormat = 'world.openfoodfacts.org';
-      var formattedDate = DataUtils.getIpFromUrl(date);
+      var formattedDate = DataUtils.getIpFromUrl(data);
       expect(formattedDate, expectedFormat);
     });
 
@@ -20,9 +20,9 @@ void main() {
 
     test('DataUtils.capitalizeFirstLetter: Correctly capitalize first letter',
         () {
-      var date = "hi";
+      var data = "hi";
       var expectedFormat = 'Hi';
-      var formattedDate = DataUtils.capitalizeFirstLetter(date);
+      var formattedDate = DataUtils.capitalizeFirstLetter(data);
       expect(formattedDate, expectedFormat);
     });
   });
