@@ -6,7 +6,7 @@ import 'package:sugatiol/components/MyHttpRequest.dart';
 
 void main() {
   group('Get7DaysAverage', () {
-    test('Get7DaysAverage.handleRequest: Correctly get daily sugar intake',
+    test('Get7DaysAverage.handleRequest: Correctly get 7 days average sugar',
         () async {
       String api = APIList.lightSugarAPI["get7daysSugar"];
       Get7DaysAverage get7 = Get7DaysAverage();
