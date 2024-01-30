@@ -4,7 +4,7 @@ import 'package:sugatiol/components/Button.dart';
 
 void main() {
   group('Button', () {
-    test('Factory Instantiation and Method Returns', () {
+    test('Button: Factory Instantiation and Method Returns', () {
       CustomFloatingActionButtonFactory factory =
           CustomFloatingActionButtonFactory(
               FloatingActionButtonLocation.endFloat, 10.0, 20.0);
@@ -15,7 +15,7 @@ void main() {
       expect(factory.createAnimator(), isA<scalingAnimation>());
     });
 
-    testWidgets('CustomFloatingActionButtonLocation Offset Calculation',
+    testWidgets('Button: CustomFloatingActionButtonLocation Offset Calculation',
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
@@ -29,7 +29,7 @@ void main() {
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
-    test('scalingAnimation Animation Test', () {
+    test('Button: scalingAnimation Animation Test', () {
       scalingAnimation animation = scalingAnimation();
       Offset begin = Offset.zero;
       Offset end = Offset(10, 10);
