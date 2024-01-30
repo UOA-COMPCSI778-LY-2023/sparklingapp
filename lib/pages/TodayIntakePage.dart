@@ -7,7 +7,6 @@ import '../Configuration/APIList.dart';
 import '../Configuration/Global.dart';
 import '../components/LogUtils.dart';
 import '../components/MyHttpRequest.dart';
-import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
 import 'ErrorPage.dart';
 import 'ProductDetailPage.dart';
@@ -162,7 +161,7 @@ class _TodayIntakePageState extends PageStateTemplate {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            'Serving Qty: ${item['serving_count']}',
+                                            'Serving Qty: ${item['serving_count']} ${item['food']['serving_qty_unit']}',
                                             style: TextStyle(
                                               color: Colors.orange,
                                               fontWeight: FontWeight.bold,
