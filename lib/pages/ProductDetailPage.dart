@@ -100,7 +100,7 @@ class _ProductDetailPageState extends PageStateTemplate {
             productDetailData["nutriments"]["sugars"])
         .toString());
 
-    ValueNotifier<double> qtyValue = ValueNotifier(qtyPer);
+    ValueNotifier<double> qtyValue = ValueNotifier(qtyNumber * 1.0);
 
     void _handleValueChanged(int newValue) {
       qtyNumber = newValue;
@@ -338,7 +338,7 @@ class _ProductDetailPageState extends PageStateTemplate {
                                 return Text(
                                   ac.toString() +
                                       " " +
-                                      (productDetailData["serving_unit"] ??
+                                      (productDetailData["serving_qty_unit"] ??
                                           "g"),
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),

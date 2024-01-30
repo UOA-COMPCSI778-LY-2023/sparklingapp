@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sugatiol/Business/AddSugarIntake.dart';
 import 'package:sugatiol/Business/SetSugarTarget.dart';
 import 'package:sugatiol/Configuration/APIList.dart';
 import 'package:sugatiol/components/MyHttpRequest.dart';
