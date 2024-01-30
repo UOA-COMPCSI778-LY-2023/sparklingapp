@@ -79,16 +79,17 @@ class _ReportPageState extends PageStateTemplate {
   Widget buildPageBody() {
     double contentHeight = MediaQuery.of(context).size.height - 220 - 200;
     if (contentHeight < 60) contentHeight = 60;
-    String strToday = MyDateUtils.formatToddMMyyy(DateTime.now());
+    String strToday = MyDateUtils.formatToEngddMMyyy(DateTime.now());
+    String strSimpleToday = MyDateUtils.formatToEngddMMyyy(DateTime.now());
     String str7DaysAgo = "";
     if (originalReport.length > 0) {
-      strToday = MyDateUtils.formatToddMMyyy(
+      strToday = MyDateUtils.formatToEngddMMyyy(
           DateTime.parse(originalReport[originalReport.length - 1]["date"]));
-      str7DaysAgo =
+      strSimpleToday = MyDateUtils.formatToddMMyyy(
+          DateTime.parse(originalReport[originalReport.length - 1]["date"]));
+      str7DaysAgo = MyDateUtils.formatToEngddMMyyy(
           DateTime.parse(originalReport[originalReport.length - 1]["date"])
-              .add(Duration(days: -7))
-              .day
-              .toString();
+              .add(Duration(days: -7)));
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -138,7 +139,7 @@ class _ReportPageState extends PageStateTemplate {
                 data: reportData,
                 labels: reportLabel,
                 title: '${reportData[reportData.length - 1]} grams',
-                subTitle: strToday,
+                subTitle: strSimpleToday,
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
                 margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                 decoration: BoxDecoration(
