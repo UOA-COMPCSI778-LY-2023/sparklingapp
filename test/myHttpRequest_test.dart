@@ -14,7 +14,9 @@ void main() {
       simpleHandler = GetProductInfoFromOpenFood();
     });
 
-    test('sendRequest returns expected Response', () async {
+    test(
+        'myHttpRequest.sendRequest: Correctly sendRequest returns expected Response',
+        () async {
       final Map<String, dynamic> testParams = {};
       String api = APIList.openFoodAPI["getFoodByBarcode"];
       String testUrl = api.replaceAll('{0}', "737628064502");
