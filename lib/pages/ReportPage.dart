@@ -26,7 +26,6 @@ class _ReportPageState extends PageStateTemplate {
   Future<void> get7DaysAverage() async {
     try {
       String api = APIList.lightSugarAPI["get7daysSugar"];
-      // 使用 ConcreteHandlerA 发送请求
       Get7DaysAverage getProductInfoFromOpenFood = Get7DaysAverage();
       Response response = await MyHttpRequest.instance
           .sendRequest(api, {}, getProductInfoFromOpenFood);
