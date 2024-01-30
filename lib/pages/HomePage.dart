@@ -110,8 +110,7 @@ class _HomePageState extends PageStateTemplate {
           setState(() {
             predictionFood = response.data['predictions'];
           });
-        } else if (response.data["ack"] == "failure"  
-                "No food data available for this time interval.") {
+        } else if (response.data["ack"] == "failure") {
           predictionFood = [];
         }
       }
@@ -190,15 +189,18 @@ class _HomePageState extends PageStateTemplate {
                     margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                     decoration: BoxDecoration(
                       color: Color.fromARGB(255, 74, 73, 73),
-                      borderRadius: BorderRadius.circular(20), // 设置圆角的大小
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Current Daily Surgar Intake is",
-                                style: TextStyle(color: Colors.white)),
+                            Text("Current Daily Surgar Intake ",
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
                             CircleWidget(),
                           ],
                         ),
@@ -260,7 +262,7 @@ class _HomePageState extends PageStateTemplate {
                           fontWeight: FontWeight.bold,
                           color: Colors.white)),
                   subtitle: Text(
-                    "Servings: ${predictionFood[index]['mostFrequentServingCount']}",
+                    "Servings: ${predictionFood[index]['mostFrequentServingCount']} ${predictionFood[index]['food']['serving_qty_unit']}",
                     style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -387,8 +389,9 @@ class CircleWidget extends StatelessWidget {
               child: Text(
                 '${showNum} g',
                 style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: 12,
                 ),
               ),
             ),

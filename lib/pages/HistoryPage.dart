@@ -1,14 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Business/GetIntakeListLastWeek.dart';
 import '../Configuration/APIList.dart';
-import '../Configuration/Global.dart';
-import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
 import '../components/MyHttpRequest.dart';
-import '../components/Toast.dart';
 import '../interface/PageStateTemplate.dart';
 import 'ErrorPage.dart';
 import 'ProductDetailPage.dart';
@@ -23,6 +19,10 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends PageStateTemplate {
   List<dynamic> intakeListLastWeek = [];
   
+  @visibleForTesting
+  void setMockData(List<dynamic> mockData) {
+    intakeListLastWeek = mockData;
+  }
 
   Future<void> getIntakeListLastWeek() async {
     try {
@@ -32,7 +32,7 @@ class _HistoryPageState extends PageStateTemplate {
           .sendRequest(api, {}, getIntakeListLastWeek);
       if (response.data["ack"] == "success") {
         setState(() {
-          intakeListLastWeek = response.data['list'];
+          intakeListLastWeek = response.data['list'].reversed.toList();
         });
       } else if (response.data["ack"] == "failure") {
         Navigator.push(

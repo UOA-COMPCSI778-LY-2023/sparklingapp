@@ -59,7 +59,7 @@ static Future<List<dynamic>> listSugarIntakesToday() async {
       Response response = await MyHttpRequest.instance
           .sendRequest(api, {}, listSugarIntakesToday);
       if (response.data["ack"] == "success") {
-          return Future.value(response.data['list']);
+          return Future.value(response.data['list'].reversed.toList());
       } else if (response.data["ack"] == "failure") {
         return Future.error(response.data["message"]);
       }else{
