@@ -20,5 +20,5 @@ class PreferencesCfg {
 }
 
 class DebugCfg {
-  static const bool isDebug = true;
+  static const bool isDebug = false;
 }

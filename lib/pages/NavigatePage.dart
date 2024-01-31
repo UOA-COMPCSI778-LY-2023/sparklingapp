@@ -6,7 +6,6 @@ import 'HomePage.dart';
 import 'ReportPage.dart';
 import 'ScanPage.dart';
 import 'TodayIntakePage.dart';
-import 'object_detector_view.dart';
 
 class NavigatePage extends StatefulWidget {
   const NavigatePage({Key? key}) : super(key: key);
