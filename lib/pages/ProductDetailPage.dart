@@ -4,6 +4,7 @@ import 'package:sugatiol/components/CommonBizLogic.dart';
 import 'package:sugatiol/components/DataUtils.dart';
 
 import '../Configuration/Global.dart';
+import '../components/Button.dart';
 import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
 import '../components/NumberAdjuster.dart';
@@ -40,6 +41,7 @@ class _ProductDetailPageState extends PageStateTemplate {
         "Scan Result",
         style: TextStyle(color: Colors.white),
       ),
+      leading: barBackButton(),
     );
   }
 

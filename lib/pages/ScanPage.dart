@@ -11,6 +11,7 @@ import 'package:sugatiol/Configuration/Global.dart';
 
 import '../Business/GetProductInfoFromOpenFood.dart';
 import '../Configuration/APIList.dart';
+import '../components/Button.dart';
 import '../components/LogUtils.dart';
 import '../components/MyHttpRequest.dart';
 import '../components/Router.dart';
@@ -288,19 +289,7 @@ class _ScanPageState extends PageStateTemplate {
       backgroundColor: Colors.black,
       centerTitle: false,
       elevation: 0,
-      leading: Container(
-        decoration: BoxDecoration(
-          color: Colors.blue, // 设置为你想要的蓝色背景
-          borderRadius: BorderRadius.all(Radius.circular(15)), // 设置圆角的半径
-        ),
-        margin: EdgeInsets.all(8), // 可以调整外边距，使按钮不会贴近边缘
-        child: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // 设置图标颜色为白色
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      leading: barBackButton(),
     );
   }
 
