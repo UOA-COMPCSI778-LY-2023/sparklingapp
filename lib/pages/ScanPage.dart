@@ -381,7 +381,8 @@ class _ScanPageState extends PageStateTemplate {
               title: Text(
                 '${(productBrand != "") ? productBrand + " - " : ""} ${(productName != "") ? productName : "Unknown product"}',
                 style: TextStyle(
-                    color: (productName != "") ? Colors.white : Colors.grey),
+                    color: (productName != "") ? Colors.white : Colors.grey,
+                    fontSize: 16),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
