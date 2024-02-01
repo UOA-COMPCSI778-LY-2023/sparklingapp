@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
+import 'package:image/image.dart' as img;
 
 class CameraView extends StatefulWidget {
   CameraView(
@@ -362,6 +363,67 @@ class _CameraViewState extends State<CameraView> {
     DeviceOrientation.landscapeRight: 270,
   };
 
+  img.Image? convertYUV420toImage(CameraImage image) {
+    try {
+      final int width = image.width;
+      final int height = image.height;
+      final Uint8List yBuffer = image.planes[0].bytes;
+      final Uint8List uBuffer = image.planes[1].bytes;
+      final Uint8List vBuffer = image.planes[2].bytes;
+      final int uvRowStride = image.planes[1].bytesPerRow;
+      final int? uvPixelStride = image.planes[1].bytesPerPixel;
+
+      final img.Image rgbImage = img.Image(width, height); // 创建RGB图像
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          final int uvIndex =
+              uvPixelStride! * (x ~/ 2) + uvRowStride * (y ~/ 2);
+          final int index = y * width + x;
+          final int Y = yBuffer[index];
+          final int U = uBuffer[uvIndex];
+          final int V = vBuffer[uvIndex];
+          // if (rgbImage.data.length > index) {
+          rgbImage.data[index] = yuvToRgb(Y, U, V);
+          // }
+        }
+      }
+      return rgbImage;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  int yuvToRgb(int y, int u, int v) {
+    var r = (y + v * 1436 / 1024 - 179).round().clamp(0, 255);
+    var g = (y - u * 46549 / 131072 + 44 - v * 93604 / 131072 + 91)
+        .round()
+        .clamp(0, 255);
+    var b = (y + u * 1814 / 1024 - 227).round().clamp(0, 255);
+    return (0xFF << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  img.Image? convertNV21ToImage(CameraImage image) {
+    final int width = image.width;
+    final int height = image.height;
+    final Uint8List yuvBytes = image.planes[0].bytes;
+    final img.Image rgbImage = img.Image(width, height); // 创建RGB图像
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final int yIndex = y * width + x;
+        final int uvIndex = (y ~/ 2) * width + (x ~/ 2) * 2 + width * height;
+
+        final int Y = yuvBytes[yIndex];
+        final int U = yuvBytes[uvIndex];
+        final int V = yuvBytes[uvIndex + 1];
+
+        rgbImage.data[yIndex] = yuvToRgb(Y, U, V);
+      }
+    }
+    return rgbImage;
+  }
+
   InputImage? _inputImageFromCameraImage(CameraImage image) {
     if (_controller == null) return null;
 
@@ -408,9 +470,24 @@ class _CameraViewState extends State<CameraView> {
     if (image.planes.length != 1) return null;
     final plane = image.planes.first;
 
+    // YUV420到RGB转换
+    // final img.Image? convertedImage;
+
+    // if (image.format.group == ImageFormatGroup.yuv420) {
+    //   convertedImage = convertYUV420toImage(image);
+    // } else if (image.format.group == ImageFormatGroup.nv21) {
+    //   convertedImage = convertNV21ToImage(image);
+    // } else {
+    //   throw Exception("Unsupport image formate: ${image.format.group}");
+    // }
+
+    // // 将img.Image转换为Uint8List
+    // final Uint8List bytes = Uint8List.fromList(img.encodeJpg(convertedImage!));
+
     // compose InputImage using bytes
     return InputImage.fromBytes(
       bytes: plane.bytes,
+      // bytes: bytes,
       metadata: InputImageMetadata(
         size: Size(image.width.toDouble(), image.height.toDouble()),
         rotation: rotation, // used only in Android

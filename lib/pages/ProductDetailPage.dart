@@ -4,6 +4,7 @@ import 'package:sugatiol/components/CommonBizLogic.dart';
 import 'package:sugatiol/components/DataUtils.dart';
 
 import '../Configuration/Global.dart';
+import '../components/Button.dart';
 import '../components/DateUtils.dart';
 import '../components/LogUtils.dart';
 import '../components/NumberAdjuster.dart';
@@ -40,6 +41,7 @@ class _ProductDetailPageState extends PageStateTemplate {
         "Scan Result",
         style: TextStyle(color: Colors.white),
       ),
+      leading: barBackButton(),
     );
   }
 
@@ -93,7 +95,7 @@ class _ProductDetailPageState extends PageStateTemplate {
       //double.parse(productDetailData['rev'].toString());
       sugarNum = double.parse(sugarTotal.toString());
     }
-    int sugarCubs = (sugarNum / 4.5).ceil();
+    int sugarCubs = (sugarNum / 4).ceil();
 
     int qtyNumber = productDetailData["serving_qty"] ?? 1;
     double qtyPer = double.parse((productDetailData["nutriments"]["Sugars"] ??
@@ -174,7 +176,7 @@ class _ProductDetailPageState extends PageStateTemplate {
                       Expanded(
                         child: Text(
                           "${productDetailData["product_name"]} equals to ${(sugarNum / 4.5).toStringAsFixed(2)} tea spoons of sugar",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
@@ -326,20 +328,21 @@ class _ProductDetailPageState extends PageStateTemplate {
                       ],
                     ),
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
-                            "Serving Size",
+                            " ", //"Serving Size",
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                           ValueListenableBuilder<double>(
                               valueListenable: qtyValue,
                               builder: (c, ac, _) {
                                 return Text(
-                                  ac.toString() +
-                                      " " +
-                                      (productDetailData["serving_qty_unit"] ??
-                                          "g"),
+                                  // ac.toString() +
+                                  //     " " +
+                                  (productDetailData["serving_qty_unit"] ??
+                                      "g"),
+                                  textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),
                                 );

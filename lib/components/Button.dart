@@ -60,3 +60,22 @@ class scalingAnimation extends FloatingActionButtonAnimator {
     return Tween<double>(begin: 1.0, end: 1.0).animate(parent);
   }
 }
+
+class barBackButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue, // 设置为你想要的蓝色背景
+        borderRadius: BorderRadius.all(Radius.circular(15)), // 设置圆角的半径
+      ),
+      margin: EdgeInsets.all(8), // 可以调整外边距，使按钮不会贴近边缘
+      child: IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.white), // 设置图标颜色为白色
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+}

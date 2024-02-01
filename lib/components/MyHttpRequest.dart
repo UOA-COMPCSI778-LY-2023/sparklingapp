@@ -16,21 +16,27 @@ class MyHttpRequest {
 
   Future<Response> sendRequest(String url, Map<String, dynamic> parameters,
       IHttpRequestHandler handler) {
-    String ip = DataUtils.getIpFromUrl(url);
-    Dio dio = getDio(ip);
+    try {
+      String ip = DataUtils.getIpFromUrl(url);
+      Dio dio = getDio(ip);
 
-    dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
-      Log.instance.d("send request：path:${options.path}，data:${options.data}");
-      return handler.next(options); //continue
-    }, onResponse: (response, handler) {
-      Log.instance.d("received response：data:${response.data}");
-      return handler.next(response); // continue
-    }, onError: (DioError e, handler) {
-      Log.instance.d("request error：message:${e.message}");
-      return handler.next(e); //continue
-    }));
+      // dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
+      //   Log.instance
+      //       .d("send request：path:${options.path}，data:${options.data}");
+      //   // return handler.next(options); //continue
+      // }, onResponse: (response, handler) {
+      //   Log.instance.d("received response：data:${response.data}");
+      //   // return handler.next(response); // continue
+      // }, onError: (DioError e, handler) {
+      //   Log.instance.d("request error：message:${e.message}");
+      //   // return handler.next(e); //continue
+      // }));
 
-    return handler.handleRequest(dio, url, parameters);
+      return handler.handleRequest(dio, url, parameters);
+    } catch (e) {
+      Log.instance.wtf(e);
+      return Future.error(e);
+    }
   }
 
   Dio getDio(String ip) {

@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sugatiol/components/Toast.dart';
 
 void main() {
-  group('Toast Tests', () {
-    testWidgets('Toast Display and Dismiss Test', (WidgetTester tester) async {
+  group('Toast', () {
+    testWidgets('Toast: Display and Dismiss Test', (WidgetTester tester) async {
       const int toastDurationMs = 5000;
 
       await tester.pumpWidget(MaterialApp(
