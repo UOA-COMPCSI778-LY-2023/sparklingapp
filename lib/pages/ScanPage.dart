@@ -284,10 +284,23 @@ class _ScanPageState extends PageStateTemplate {
   @override
   AppBar buildAppBar() {
     return AppBar(
-      title: Text("Scan Barcode"),
+      title: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Scan Barcode",
+            style: TextStyle(color: Colors.white, fontSize: 24),
+          ),
+          Text(
+            "Record the Food You are Eating",
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ],
+      ),
       iconTheme: IconThemeData(color: Colors.white),
       backgroundColor: Colors.black,
-      centerTitle: false,
+      centerTitle: true,
       elevation: 0,
       leading: barBackButton(),
     );
