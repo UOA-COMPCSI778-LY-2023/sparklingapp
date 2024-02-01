@@ -95,7 +95,7 @@ class _ProductDetailPageState extends PageStateTemplate {
       //double.parse(productDetailData['rev'].toString());
       sugarNum = double.parse(sugarTotal.toString());
     }
-    int sugarCubs = (sugarNum / 4.5).ceil();
+    int sugarCubs = (sugarNum / 4).ceil();
 
     int qtyNumber = productDetailData["serving_qty"] ?? 1;
     double qtyPer = double.parse((productDetailData["nutriments"]["Sugars"] ??
