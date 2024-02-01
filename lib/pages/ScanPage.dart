@@ -39,6 +39,7 @@ class _ScanPageState extends PageStateTemplate {
   Map notExistProducts = {};
   bool isAIBusy = false;
   static ValueNotifier<String> aiAnswer = ValueNotifier("");
+  bool _showScanBarcode = true;
 
   Future<void> addProduct(String barcode) async {
     try {
@@ -241,39 +242,40 @@ class _ScanPageState extends PageStateTemplate {
       _text = '';
     });
 
-    barcodes = await _barcodeScanner.processImage(inputImage);
-    barcodes.forEach((bcode) {
-      if (bcode.rawValue != null &&
-          !products.keys.toList().contains(bcode.rawValue) &&
-          !notExistProducts.keys.toList().contains(bcode.rawValue)) {
-        String bcodeText = bcode.rawValue!;
-        addProduct(bcodeText);
+    if (_showScanBarcode) {
+      barcodes = await _barcodeScanner.processImage(inputImage);
+      barcodes.forEach((bcode) {
+        if (bcode.rawValue != null &&
+            !products.keys.toList().contains(bcode.rawValue) &&
+            !notExistProducts.keys.toList().contains(bcode.rawValue)) {
+          String bcodeText = bcode.rawValue!;
+          addProduct(bcodeText);
+        }
+      });
+      if (inputImage.metadata?.size != null &&
+          inputImage.metadata?.rotation != null) {
+        final painter = BarcodeDetectorPainter(
+          barcodes,
+          inputImage.metadata!.size,
+          inputImage.metadata!.rotation,
+          _cameraLensDirection,
+        );
+        _customPaint = CustomPaint(painter: painter);
+      } else {
+        String text = 'Barcodes found: ${barcodes.length}\n\n';
+        for (final barcode in barcodes) {
+          text += 'Barcode: ${barcode.rawValue}\n\n';
+        }
+        _text = text;
+        _customPaint = null;
       }
-    });
-    if (inputImage.metadata?.size != null &&
-        inputImage.metadata?.rotation != null) {
-      final painter = BarcodeDetectorPainter(
-        barcodes,
-        inputImage.metadata!.size,
-        inputImage.metadata!.rotation,
-        _cameraLensDirection,
-      );
-      _customPaint = CustomPaint(painter: painter);
-    } else {
-      String text = 'Barcodes found: ${barcodes.length}\n\n';
-      for (final barcode in barcodes) {
-        text += 'Barcode: ${barcode.rawValue}\n\n';
-      }
-      _text = text;
-      // TODO: set _customPaint to draw boundingRect on top of image
-      _customPaint = null;
     }
     _isBusy = false;
     if (mounted) {
       setState(() {});
     }
 
-    if (!isAIBusy) {
+    if (!isAIBusy && !_showScanBarcode) {
       getResponseFromAI(inputImage);
     }
   }
@@ -342,7 +344,11 @@ class _ScanPageState extends PageStateTemplate {
             // Text(barcode),
           ],
         ),
-        if (products.keys.toList().length > 0)
+        _buildTabBar(),
+        SizedBox(
+          height: 15,
+        ),
+        if (products.keys.toList().length > 0 && _showScanBarcode)
           Container(
             margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             decoration: BoxDecoration(
@@ -383,47 +389,48 @@ class _ScanPageState extends PageStateTemplate {
         SizedBox(
           height: 15,
         ),
-        ValueListenableBuilder<String>(
-            valueListenable: aiAnswer,
-            builder: (c, ac, _) {
-              return ac.isNotEmpty
-                  ? Expanded(
-                      flex: 1,
-                      child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  "Google Gemini AI Tips: ",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+        if (!_showScanBarcode)
+          ValueListenableBuilder<String>(
+              valueListenable: aiAnswer,
+              builder: (c, ac, _) {
+                return ac.isNotEmpty
+                    ? Expanded(
+                        flex: 1,
+                        child: Container(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    "Google Gemini AI Tips: ",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
-                              ),
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              ListTile(
-                                title: Text(
-                                  ac,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 10,
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                ListTile(
+                                  title: Text(
+                                    ac,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 10,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )),
-                    )
-                  : Text("");
-            }),
+                              ],
+                            )),
+                      )
+                    : Text("");
+              }),
       ],
     );
   }
@@ -431,5 +438,68 @@ class _ScanPageState extends PageStateTemplate {
   @override
   void specificInit() {
     Gemini.init(apiKey: 'AIzaSyDuln2ikwt50BUdzKhQ5iahntcdXcwBzCw');
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _showScanBarcode = true;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color:
+                          _showScanBarcode ? Colors.blue : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Scanning',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _showScanBarcode = false;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color:
+                          !_showScanBarcode ? Colors.blue : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Food Detection',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
