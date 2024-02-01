@@ -1,5 +1,6 @@
 class APIList {
   static const String _ip = "54.153.236.50";
+  // static const String _ip = "172.23.89.162";
   static const String _port = "3000";
   static Map openFoodAPI = {
     "getFoodByBarcode": "https://world.openfoodfacts.org/api/v3/product/{0}",
@@ -16,7 +17,8 @@ class APIList {
     "listSugarIntakesToday":
         "http://$_ip:$_port/users/jnz121/intakes-list-today",
     "removeSugarIntake": "http://$_ip:$_port/users/sugar-intake/remove",
-    "getPredictionbymodel": "http://$_ip:$_port/users/jnz121/intake-model-prediction",
+    "getPredictionbymodel":
+        "http://$_ip:$_port/users/jnz121/intake-model-prediction",
     "getFoodByBarcode": "http://$_ip:$_port/packaged-food/{0}",
   };
   static Map geminiPrompt = {

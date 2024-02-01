@@ -48,6 +48,8 @@ dependencies:
   flutter_slidable: ^3.0.1
   flutter_gemini: ^2.0.1
   mockito: ^5.4.4
+  image: ^3.0.1
+  uuid: ^4.3.3
 
 dev_dependencies:
   flutter_test:
