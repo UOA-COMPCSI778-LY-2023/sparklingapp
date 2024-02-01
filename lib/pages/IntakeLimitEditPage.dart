@@ -118,9 +118,9 @@ class _IntakeLimitEditPageState extends PageStateTemplate {
                 ),
               ],
             ),
-            SizedBox(height: topPadding), // 保存按钮前的空间
+            SizedBox(height: topPadding),
 
-            // 保存按钮
+            
             ConstrainedBox(
               constraints: BoxConstraints.tightFor(
                 width: MediaQuery.of(context).size.width - 32,
@@ -150,7 +150,7 @@ class _IntakeLimitEditPageState extends PageStateTemplate {
   Future<void> setSugarLimit(String user, double sugarTarget) async {
     Map<String, dynamic> parameters = {
       "username": user,
-      "sugarTarget": sugarTarget //int.parse(_controller.text)
+      "sugarTarget": sugarTarget
     };
     try {
       String api = APIList.lightSugarAPI["setSugarTarget"];
@@ -172,7 +172,6 @@ class _IntakeLimitEditPageState extends PageStateTemplate {
       }
     } catch (e) {
       Log.instance.e(e);
-      // Show an error message
     }
   }
 }
