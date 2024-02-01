@@ -95,7 +95,6 @@ class _ProductDetailPageState extends PageStateTemplate {
       double.parse(productDetailData['rev'].toString());
       sugarNum = double.parse(sugarTotal.toString());
     }
-    int sugarCubs = (sugarNum / 4).ceil();
 
     int qtyNumber = productDetailData["serving_qty"] ?? 1;
     double qtyPer = (double.parse((productDetailData["nutriments"]["Sugars"] ??
@@ -104,390 +103,416 @@ class _ProductDetailPageState extends PageStateTemplate {
         qtyNumber;
 
     ValueNotifier<double> qtyValue = ValueNotifier(qtyNumber * 1.0);
-
+    qtyValue.value = qtyPer * qtyNumber;
+    int sugarCubs = (qtyValue.value / 4).ceil();
     void _handleValueChanged(int newValue) {
+      // setState(() {
       qtyNumber = newValue;
       qtyValue.value = qtyPer * qtyNumber;
-      setState(() {});
+      sugarCubs = (qtyValue.value / 4).ceil();
+      // });
     }
 
     Size screenSize = MediaQuery.of(context).size;
     double bottomButtonAreaHeight = 60;
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: bottomButtonAreaHeight,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.topLeft,
-                  height: 200,
-                  width: size.width - 20,
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  // width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 74, 73, 73),
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 1.5,
-                      crossAxisSpacing: 10,
-                    ),
-                    itemCount: sugarCubs,
-                    itemBuilder: (context, index) {
-                      return Image(
-                        image: AssetImage("assets/spoon.jpeg"),
-                        //color: Colors.white,
-                        width: 10,
-                        height: 10,
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  //height: 400 - 40,
-                  //right: 40,
-                  margin: const EdgeInsets.fromLTRB(20, 0, 40, 0),
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Text(
-                      "Total sugar ${sugarNum} g",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(color: Colors.white),
-                    )
-                  ]),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
-                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 74, 73, 73),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
+    return ValueListenableBuilder<double>(
+        valueListenable: qtyValue,
+        builder: (c, ac, _) {
+          return Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: bottomButtonAreaHeight,
+                child: SingleChildScrollView(
+                  child: Column(
                     children: [
-                      Icon(
-                        Icons.access_alarm,
-                        color: Colors.yellow,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${productDetailData["product_name"]} equals to ${(sugarNum / 4.5).toStringAsFixed(2)} tea spoons of sugar",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                          // overflow: TextOverflow.ellipsis,
-                          // maxLines: 2,
+                      Container(
+                        alignment: Alignment.topLeft,
+                        height: 200,
+                        width: size.width - 20,
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        // width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 74, 73, 73),
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    "Product Name",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                Container(
-                  height: 200,
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 74, 73, 73),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1, // 占用可用空间的1份
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            childAspectRatio: 1.5,
+                            crossAxisSpacing: 10,
+                          ),
+                          itemCount: sugarCubs,
+                          itemBuilder: (context, index) {
+                            return Image(
+                              image: AssetImage("assets/spoon.jpeg"),
+                              //color: Colors.white,
+                              width: 10,
+                              height: 10,
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        //height: 400 - 40,
+                        //right: 40,
+                        margin: const EdgeInsets.fromLTRB(20, 0, 40, 0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Total sugar ${ac} g",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ]),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
+                        margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 74, 73, 73),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_alarm,
+                              color: Colors.yellow,
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Expanded(
+                              child: Text(
+                                "${productDetailData["product_name"]} equals to ${(ac / 4.5).toStringAsFixed(2)} tea spoons of sugar",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                // overflow: TextOverflow.ellipsis,
+                                // maxLines: 2,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          "Product Name",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      Container(
+                        height: 200,
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 74, 73, 73),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 1, // 占用可用空间的1份
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                // color: Colors.red,
+                                // height: 100,
+                                child: Center(
+                                  child: (imgUrl == "")
+                                      ? Image(
+                                          image: AssetImage(
+                                              "assets/product_no_found.png"))
+                                      : Image.network(imgUrl),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2, // 占用可用空间的2份
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  productDetailData["product_name"],
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 24),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (ingridientsList.length > 0)
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          alignment: Alignment.bottomLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Ingridients Table",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                "Per Serving",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (ingridientsList.length > 0)
+                        Container(
+                          height: ingridientsList.length * 30 + 5,
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                           decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 74, 73, 73),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          // color: Colors.red,
-                          // height: 100,
-                          child: Center(
-                            child: (imgUrl == "")
-                                ? Image(
-                                    image: AssetImage(
-                                        "assets/product_no_found.png"))
-                                : Image.network(imgUrl),
+                          child: ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            itemCount: ingridientsList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              String strAmount = "";
+                              strAmount = ingridientsList[index]
+                                      ["percent_estimate"]
+                                  .toString();
+                              if (strAmount != "") {
+                                double amount = double.parse(strAmount);
+                                strAmount = amount.toStringAsFixed(1);
+                              }
+                              return Container(
+                                margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                height: 25,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        ingridientsList[index]["text"],
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        strAmount + " g",
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      Container(
+                        height: 80,
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 74, 73, 73),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Serving Qty",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                              NumberAdjuster(
+                                minNumber: 1,
+                                maxNumber:
+                                    (productDetailData["serving_per_pack"] ??
+                                            1) *
+                                        (productDetailData["serving_qty"] ?? 1),
+                                initialValue: 1,
+                                onValueChanged: _handleValueChanged,
+                              ),
+                            ],
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  " ", //"Serving Size",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                ),
+                                Text(
+                                  "　　　　　　　　　" +
+                                      DataUtils.capitalizeFirstLetter(
+                                          (productDetailData[
+                                                  "serving_qty_unit"] ??
+                                              "g")),
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                ),
+                              ])
+                        ]),
+                      ),
+                      if (nutrimentsServing.keys.length > 0)
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          alignment: Alignment.bottomLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Nutrition Table",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                "Per Serving",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (nutrimentsServing.keys.length > 0)
+                        Container(
+                          height: nutrimentsServing.length * 30 + 5,
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 74, 73, 73),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            itemCount: nutrimentsServing.keys.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              String strAmount = "";
+                              String strKey =
+                                  nutrimentsServing.keys.elementAt(index);
+                              strAmount = nutrimentsServing[strKey].toString();
+                              return Container(
+                                margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                height: 25,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        DataUtils.capitalizeFirstLetter(strKey),
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        strAmount,
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 5,
+                left: 40,
+                right: 40,
+                child: Container(
+                  // color: const Color.fromARGB(255, 110, 109, 109),
+                  alignment: Alignment.bottomCenter,
+                  // margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 120,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            try {
+                              if (productDetailData["isMyOwner"] != null &&
+                                  productDetailData["isMyOwner"] == true) {
+                                CommonBizLogic.addSugarIntake(
+                                    productDetailData["code"], qtyNumber);
+                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            OneClickConfirmPage(
+                                                msg: "Sugar Intake added!")));
+                                CommonBizLogic.getSugarIntakeToday();
+                              }
+                            } catch (e) {
+                              Log.instance.e(e);
+                              Toast.toast(context,
+                                  msg: "${e.toString()}",
+                                  position: ToastPostion.bottom);
+                            }
+                          },
+                          child: Text('Confirm',
+                              style: TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                            primary: (productDetailData["isMyOwner"] != null &&
+                                    productDetailData["isMyOwner"] == true)
+                                ? Colors.blue
+                                : Colors.grey,
                           ),
                         ),
                       ),
-                      Expanded(
-                        flex: 2, // 占用可用空间的2份
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            productDetailData["product_name"],
-                            style: TextStyle(color: Colors.white, fontSize: 24),
+                      // SizedBox(
+                      //   width: 80,
+                      // ),
+                      SizedBox(
+                        width: 120,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel',
+                              style: TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (ingridientsList.length > 0)
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Ingridients Table",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          "Per Serving",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                if (ingridientsList.length > 0)
-                  Container(
-                    height: ingridientsList.length * 30 + 5,
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 74, 73, 73),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      itemCount: ingridientsList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String strAmount = "";
-                        strAmount = ingridientsList[index]["percent_estimate"]
-                            .toString();
-                        if (strAmount != "") {
-                          double amount = double.parse(strAmount);
-                          strAmount = amount.toStringAsFixed(1);
-                        }
-                        return Container(
-                          margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                          height: 25,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  ingridientsList[index]["text"],
-                                  style: TextStyle(color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  strAmount + " g",
-                                  style: TextStyle(color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                Container(
-                  height: 80,
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 74, 73, 73),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Serving Qty",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                        NumberAdjuster(
-                          minNumber: 1,
-                          maxNumber:
-                              (productDetailData["serving_per_pack"] ?? 1) *
-                                  (productDetailData["serving_qty"] ?? 1),
-                          initialValue: 1,
-                          onValueChanged: _handleValueChanged,
-                        ),
-                      ],
-                    ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            " ", //"Serving Size",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                          Text(
-                            (productDetailData["serving_qty_unit"] ?? "g"),
-                            textAlign: TextAlign.left,
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                        ])
-                  ]),
-                ),
-                if (nutrimentsServing.keys.length > 0)
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Nutrition Table",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          "Per Serving",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                if (nutrimentsServing.keys.length > 0)
-                  Container(
-                    height: nutrimentsServing.length * 30 + 5,
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 74, 73, 73),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      itemCount: nutrimentsServing.keys.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String strAmount = "";
-                        String strKey = nutrimentsServing.keys.elementAt(index);
-                        strAmount = nutrimentsServing[strKey].toString();
-                        return Container(
-                          margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                          height: 25,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  DataUtils.capitalizeFirstLetter(strKey),
-                                  style: TextStyle(color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  strAmount,
-                                  style: TextStyle(color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 5,
-          left: 40,
-          right: 40,
-          child: Container(
-            // color: const Color.fromARGB(255, 110, 109, 109),
-            alignment: Alignment.bottomCenter,
-            // margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      try {
-                        if (productDetailData["isMyOwner"] != null &&
-                            productDetailData["isMyOwner"] == true) {
-                          CommonBizLogic.addSugarIntake(
-                              productDetailData["code"], qtyNumber);
-                          Navigator.pop(context);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => OneClickConfirmPage(
-                                      msg: "Sugar Intake added!")));
-                          CommonBizLogic.getSugarIntakeToday();
-                        }
-                      } catch (e) {
-                        Log.instance.e(e);
-                        Toast.toast(context,
-                            msg: "${e.toString()}",
-                            position: ToastPostion.bottom);
-                      }
-                    },
-                    child:
-                        Text('Confirm', style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      primary: (productDetailData["isMyOwner"] != null &&
-                              productDetailData["isMyOwner"] == true)
-                          ? Colors.blue
-                          : Colors.grey,
-                    ),
-                  ),
-                ),
-                // SizedBox(
-                //   width: 80,
-                // ),
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child:
-                        Text('Cancel', style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
-    );
+              )
+            ],
+          );
+        });
   }
 
   @override
