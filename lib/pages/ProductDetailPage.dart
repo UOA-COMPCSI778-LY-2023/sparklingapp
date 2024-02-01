@@ -109,9 +109,16 @@ class _ProductDetailPageState extends PageStateTemplate {
       qtyValue.value = qtyPer * qtyNumber;
     }
 
+    Size screenSize = MediaQuery.of(context).size;
+    double bottomButtonAreaHeight = 60;
+
     return Stack(
       children: [
         Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: bottomButtonAreaHeight,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -419,11 +426,13 @@ class _ProductDetailPageState extends PageStateTemplate {
           ),
         ),
         Positioned(
-          bottom: 20,
+          bottom: 5,
+          left: 40,
+          right: 40,
           child: Container(
             // color: const Color.fromARGB(255, 110, 109, 109),
             alignment: Alignment.bottomCenter,
-            margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+            // margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -455,9 +464,9 @@ class _ProductDetailPageState extends PageStateTemplate {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 80,
-                ),
+                // SizedBox(
+                //   width: 80,
+                // ),
                 SizedBox(
                   width: 120,
                   child: ElevatedButton(
