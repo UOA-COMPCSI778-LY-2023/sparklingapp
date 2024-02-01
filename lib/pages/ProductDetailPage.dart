@@ -328,20 +328,21 @@ class _ProductDetailPageState extends PageStateTemplate {
                       ],
                     ),
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
-                            "Serving Size",
+                            " ", //"Serving Size",
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                           ValueListenableBuilder<double>(
                               valueListenable: qtyValue,
                               builder: (c, ac, _) {
                                 return Text(
-                                  ac.toString() +
-                                      " " +
-                                      (productDetailData["serving_qty_unit"] ??
-                                          "g"),
+                                  // ac.toString() +
+                                  //     " " +
+                                  (productDetailData["serving_qty_unit"] ??
+                                      "g"),
+                                  textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),
                                 );
