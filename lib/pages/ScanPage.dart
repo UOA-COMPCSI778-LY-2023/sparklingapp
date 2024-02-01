@@ -55,6 +55,7 @@ class _ScanPageState extends PageStateTemplate {
 
         if (response.data["ack"] == "success") {
           Map productData = response.data["data"];
+          productData["isMyOwner"] = true;
           products =
               {}; //always clear all the product data, only show one product
           if (products[barcode] == null) {

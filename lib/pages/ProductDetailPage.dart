@@ -92,21 +92,23 @@ class _ProductDetailPageState extends PageStateTemplate {
     }
     if (nutriments["sugars"] != null) {
       sugarTotal = nutriments["sugars"] * 1.0;
-      //double.parse(productDetailData['rev'].toString());
+      double.parse(productDetailData['rev'].toString());
       sugarNum = double.parse(sugarTotal.toString());
     }
     int sugarCubs = (sugarNum / 4).ceil();
 
     int qtyNumber = productDetailData["serving_qty"] ?? 1;
-    double qtyPer = double.parse((productDetailData["nutriments"]["Sugars"] ??
-            productDetailData["nutriments"]["sugars"])
-        .toString());
+    double qtyPer = (double.parse((productDetailData["nutriments"]["Sugars"] ??
+                productDetailData["nutriments"]["sugars"])
+            .toString())) /
+        qtyNumber;
 
     ValueNotifier<double> qtyValue = ValueNotifier(qtyNumber * 1.0);
 
     void _handleValueChanged(int newValue) {
       qtyNumber = newValue;
       qtyValue.value = qtyPer * qtyNumber;
+      setState(() {});
     }
 
     Size screenSize = MediaQuery.of(context).size;
@@ -327,9 +329,11 @@ class _ProductDetailPageState extends PageStateTemplate {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         NumberAdjuster(
-                          minNumber: productDetailData["serving_qty"] ?? 1,
-                          maxNumber: productDetailData["serving_per_pack"] ?? 1,
-                          initialValue: qtyNumber,
+                          minNumber: 1,
+                          maxNumber:
+                              (productDetailData["serving_per_pack"] ?? 1) *
+                                  (productDetailData["serving_qty"] ?? 1),
+                          initialValue: 1,
                           onValueChanged: _handleValueChanged,
                         ),
                       ],
@@ -341,19 +345,11 @@ class _ProductDetailPageState extends PageStateTemplate {
                             " ", //"Serving Size",
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
-                          ValueListenableBuilder<double>(
-                              valueListenable: qtyValue,
-                              builder: (c, ac, _) {
-                                return Text(
-                                  // ac.toString() +
-                                  //     " " +
-                                  (productDetailData["serving_qty_unit"] ??
-                                      "g"),
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 14),
-                                );
-                              }),
+                          Text(
+                            (productDetailData["serving_qty_unit"] ?? "g"),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
                         ])
                   ]),
                 ),
@@ -441,15 +437,18 @@ class _ProductDetailPageState extends PageStateTemplate {
                   child: ElevatedButton(
                     onPressed: () {
                       try {
-                        CommonBizLogic.addSugarIntake(
-                            productDetailData["code"], qtyNumber);
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OneClickConfirmPage(
-                                    msg: "Sugar Intake added!")));
-                        CommonBizLogic.getSugarIntakeToday();
+                        if (productDetailData["isMyOwner"] != null &&
+                            productDetailData["isMyOwner"] == true) {
+                          CommonBizLogic.addSugarIntake(
+                              productDetailData["code"], qtyNumber);
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OneClickConfirmPage(
+                                      msg: "Sugar Intake added!")));
+                          CommonBizLogic.getSugarIntakeToday();
+                        }
                       } catch (e) {
                         Log.instance.e(e);
                         Toast.toast(context,
@@ -460,7 +459,10 @@ class _ProductDetailPageState extends PageStateTemplate {
                     child:
                         Text('Confirm', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
+                      primary: (productDetailData["isMyOwner"] != null &&
+                              productDetailData["isMyOwner"] == true)
+                          ? Colors.blue
+                          : Colors.grey,
                     ),
                   ),
                 ),
