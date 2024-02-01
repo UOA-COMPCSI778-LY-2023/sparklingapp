@@ -177,8 +177,8 @@ class _ProductDetailPageState extends PageStateTemplate {
                         child: Text(
                           "${productDetailData["product_name"]} equals to ${(sugarNum / 4.5).toStringAsFixed(2)} tea spoons of sugar",
                           style: TextStyle(color: Colors.white, fontSize: 16),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                          // overflow: TextOverflow.ellipsis,
+                          // maxLines: 2,
                         ),
                       )
                     ],
