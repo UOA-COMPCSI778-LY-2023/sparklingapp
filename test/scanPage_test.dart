@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:camera/camera.dart';
 import 'package:sugatiol/components/barcode/detector_view.dart';
 import 'package:sugatiol/pages/ScanPage.dart';
 

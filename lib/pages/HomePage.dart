@@ -164,7 +164,7 @@ class _HomePageState extends PageStateTemplate {
                                 sugarTarget: targetSugarNum)),
                       );
                     },
-                    child: Text("Set Target",
+                    child: Text("Set Limit",
                         style: TextStyle(color: Colors.blue)),
                   ),
                 ],
@@ -196,9 +196,9 @@ class _HomePageState extends PageStateTemplate {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Current Daily Surgar Intake ",
+                            Text("Current Surgar Intake ",
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
                             CircleWidget(),
@@ -389,7 +389,7 @@ class CircleWidget extends StatelessWidget {
               child: Text(
                 '${showNum} g',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
